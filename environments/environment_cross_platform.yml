@@ -1,0 +1,7 @@
+name: top-fibers
+channels:
+  - defaults
+dependencies:
+  - pandas=1.4.3
+  - pyarrow=8.0.0
+prefix: /data_volume/miniconda3/envs/top-fibers
