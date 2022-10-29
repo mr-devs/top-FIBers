@@ -14,9 +14,6 @@ Output:
     1. {YYYY_mm_dd}__fib_indices.parquet: a pandas dataframe with the following columns:
         - user_id (str) : a unique Twitter user ID
         - fib_index (int) : a specific user's FIB index
-
-    2. {YYYY_mm_dd}__userids_total_rts.parquet: a pandas dataframe with the following columns:
-        - user_id (str) : a unique Twitter user ID
         - total_retweets (int) : a specific user's FIB index
 
     NOTE: YYYY_mm_dd will be representative of the machine's current date
@@ -222,7 +219,6 @@ def create_fib_frame(userid_rt_count_lists, userid_username):
             )
 
         fib_frame = pd.DataFrame.from_records(user_records)
-        fib_frame.sort_values(by="fib_index", ascending=False, inplace=True)
 
         return fib_frame
 
@@ -252,14 +248,12 @@ if __name__ == "__main__":
     userid_rt_counts_frame.sort_values(
         by="total_retweets", ascending=False, inplace=True
     )
+    fib_frame = fib_frame.merge(userid_rt_counts_frame, on="user_id")
+    fib_frame.sort_values(by="fib_index", ascending=False, inplace=True)
 
     # Save files
     today = datetime.datetime.now().strftime("%Y_%m_%d")
-
     output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices.parquet")
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
-
-    output_rts_fname = os.path.join(output_dir, f"{today}__userids_total_rts.parquet")
-    userid_rt_counts_frame.to_parquet(output_rts_fname, index=False, engine="pyarrow")
 
     print("Script Complete.")
