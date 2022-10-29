@@ -10,11 +10,16 @@ Input:
     NOTE: Call the calc_fib_indices.py -h flag to get input/flag details.
 
 Output:
-    A .parquet file containing a pandas dataframe with the following columns:
+    Two .parquet files containing:
+    1. {YYYY_mm_dd}__fib_indices.parquet: a pandas dataframe with the following columns:
         - user_id (str) : a unique Twitter user ID
         - fib_index (int) : a specific user's FIB index
-    - Output filename form: {YYYY_mm_dd}__fib_indices.parquet
-        - YYYY_mm_dd will be representative of the machine's current date
+
+    2. {YYYY_mm_dd}__userids_total_rts.parquet: a pandas dataframe with the following columns:
+        - user_id (str) : a unique Twitter user ID
+        - total_retweets (int) : a specific user's FIB index
+
+    NOTE: YYYY_mm_dd will be representative of the machine's current date
 
 What is the FIB-index?
     Please see our working paper for details.
@@ -31,7 +36,7 @@ import os
 
 import pandas as pd
 
-from collections import defaultdict
+from collections import defaultdict, Counter
 from top_fibers_pkg.data_model import Tweet_v1
 from top_fibers_pkg import calc_fib_index, parse_cl_args
 
@@ -155,7 +160,8 @@ def create_userid_rt_counts(tweetid_max_rts, userid_tweetids):
 
     Returns:
     -----------
-    - userid_rt_counts (dict) : {userid_x : list([rt count (int) for each tweetid sent by user_x])}
+    - userid_rt_count_lists (dict) : {userid_x : list([rt count (int) for each tweetid sent by userid_x])}
+    - userid_rt_counts (dict) : {userid_x : total rts earned by userid_x}
 
     Exceptions:
     -----------
@@ -167,24 +173,27 @@ def create_userid_rt_counts(tweetid_max_rts, userid_tweetids):
         raise TypeError("`userid_tweetids` must be a dict!")
 
     try:
-        userid_rt_counts = defaultdict(list)
+        userid_rt_count_lists = defaultdict(list)
+        userid_rt_counts = Counter()
         for userid, tweetids in userid_tweetids.items():
             for tweetid in tweetids:
-                userid_rt_counts[userid].append(tweetid_max_rts[tweetid])
-        return userid_rt_counts
+                num_rts = tweetid_max_rts[tweetid]
+                userid_rt_count_lists[userid].append(num_rts)
+                userid_rt_counts[userid] += num_rts
+        return userid_rt_count_lists, dict(userid_rt_counts)
 
     except Exception as e:
         raise Exception(e)
 
 
-def create_fib_frame(userid_rt_counts, userid_username):
+def create_fib_frame(userid_rt_count_lists, userid_username):
     """
     Create a dataframe where each row contains a single users identification
     information and FIB-index.
 
     Parameters:
     -----------
-    - userid_rt_counts (dict) : {userid_x : list([rt count (int) for each tweetid sent by user_x])}
+    - userid_rt_count_lists (dict) : {userid_x : list([rt count (int) for each tweetid sent by user_x])}
     - userid_username (dict) : {userid : username}
 
     Returns:
@@ -198,12 +207,12 @@ def create_fib_frame(userid_rt_counts, userid_username):
     -----------
     - Exception, TypeError
     """
-    if not isinstance(userid_rt_counts, dict):
-        raise TypeError("`userid_rt_counts` must be a dict!")
+    if not isinstance(userid_rt_count_lists, dict):
+        raise TypeError("`userid_rt_count_lists` must be a dict!")
 
     user_records = []
     try:
-        for userid, rt_cnt_list in userid_rt_counts.items():
+        for userid, rt_cnt_list in userid_rt_count_lists.items():
             user_records.append(
                 {
                     "user_id": userid,
@@ -233,12 +242,24 @@ if __name__ == "__main__":
 
     # Wrangle data and calculate FIB indices
     tweetid_max_rts, userid_tweetids, userid_username = load_tweets(data_files)
-    userid_rt_counts = create_userid_rt_counts(tweetid_max_rts, userid_tweetids)
-    fib_frame = create_fib_frame(userid_rt_counts, userid_username)
+    userid_rt_count_lists, userid_rt_counts = create_userid_rt_counts(
+        tweetid_max_rts, userid_tweetids
+    )
+    fib_frame = create_fib_frame(userid_rt_count_lists, userid_username)
+    userid_rt_counts_frame = pd.DataFrame.from_records(
+        list(userid_rt_counts.items()), columns=["user_id", "total_retweets"]
+    )
+    userid_rt_counts_frame.sort_values(
+        by="total_retweets", ascending=False, inplace=True
+    )
 
-    # Save file
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    output_fname = os.path.join(output_dir, f"{today}__fib_indices.parquet")
-    fib_frame.to_parquet(output_fname, index=False, engine="pyarrow")
+    # Save files
+    today = datetime.datetime.now().strftime("%Y_%m_%d")
+
+    output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices.parquet")
+    fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
+
+    output_rts_fname = os.path.join(output_dir, f"{today}__userids_total_rts.parquet")
+    userid_rt_counts_frame.to_parquet(output_rts_fname, index=False, engine="pyarrow")
 
     print("Script Complete.")
