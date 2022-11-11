@@ -1,9 +1,3 @@
----
-layout: page
-title: "Welcome"
-permalink: /top-fibers/welcome
----
-
 # This is new!!!
 
 # top-fibers
@@ -12,7 +6,7 @@ Code to find and rank the top superspreaders of misinformation on Twitter using 
 ## FIB-index
 The FIB-index is a simple yet effective metric for estimating a social media user's influence within a misinformation network on a given platform.
 See the working paper for more details: [Matthew R. DeVerna, Rachith Aiyappa, Diogo Pacheco, John Bryden, and Filippo Menczer, 2021](https://arxiv.org/abs/2207.09524).
-Should you use the FIB-index in your own work, please cite the latest version of that work.
+Should you use the FIB-index in your own work, please cite the latest version of that paper.
 
 ## Data
 This repository is set up to utilize data that is output by the Observatory on Social Media's (OSoMe) Decahose infrastructure.
