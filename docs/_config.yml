@@ -1,7 +1,5 @@
 # Build settings
 markdown: kramdown
-theme: minima
-# remote_theme: pages-themes/minimal@v0.2.0
 
 kramdown:
   math_engine: mathjax
@@ -12,6 +10,9 @@ header_pages:
   - setup.md
   - documentation.md
 
-# The default date format, used if none is specified in the tag.
+# The default date for minima, used if none is specified in the tag.
 minima:
   date_format: "%b %-d, %Y"
+
+theme: minima
+# remote_theme: pages-themes/minimal@v0.2.0
