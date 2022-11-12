@@ -1,6 +1,8 @@
 ---
 title: "Overview of how the code works"
 ---
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S" (%Z)}}
+
 There are three general processes that take place for the project to run.
 
 ### 1. Getting the data

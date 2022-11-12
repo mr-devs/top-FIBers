@@ -1,6 +1,8 @@
 ---
 title: "Updating this documentation"
 ---
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S" (%Z)}}
+
 The documentation on this site is rendered automatically by [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 
 **Adding a new page to this documentation is as simple as creating a [markdown file](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) (extension `.md`).**
