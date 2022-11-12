@@ -15,4 +15,4 @@ This site makes up the official documentation of everything that is needed to kn
 - [Updating this documentation](./documentation.md)
 
 
-> Last Updated: {% last_modified_at %}
+> Last Updated: {{ page.date | date: date_format }}
