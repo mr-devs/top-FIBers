@@ -1,4 +1,7 @@
-## Setting up the project
+---
+title: "Setting up an environment"
+---
+
 
 This project requires two steps to get things ready to run.
 
