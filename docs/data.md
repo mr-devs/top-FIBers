@@ -1,4 +1,6 @@
-## Data
+---
+title: "Data"
+---
 This project utilizes data that is output by the Observatory on Social Media's (OSoMe) Decahose infrastructure.
 - [Learn more about OSoMe](https://osome.iu.edu/)
 - [Learn more about Twitter's Decahose](https://developer.twitter.com/en/docs/twitter-api/enterprise/decahose-api/overview/decahose)

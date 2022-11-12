@@ -1,5 +1,6 @@
-## Understanding `top_fibers_pkg`
-
+---
+title: "Understanding `top_fibers_pkg`"
+---
 [`top_fibers_pkg`](https://github.com/mr-devs/top-fibers/tree/main/package) is meant to be a locally maintained package that contains helpful data models, script helpers, and utility functions.
 The intention is to keep things as clean and easy to maintain as possible.
 

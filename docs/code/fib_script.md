@@ -1,5 +1,6 @@
-## Understanding how the FIB script works
-
+---
+title: "Understanding how the FIB script works"
+---
 The [FIB-index](../fib_index.md) is a simple yet effective metric for estimating a social media user's influence within a misinformation network on a given platform.
 
 To calculate FIB-indices, we have the [`calc_fib_indices.py`](https://github.com/mr-devs/top-fibers/blob/main/scripts/calc_fib_indices.py) script.
