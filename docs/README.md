@@ -13,3 +13,6 @@ This site makes up the official documentation of everything that is needed to kn
 - [Input data](./data.md)
 - [FIB-index](./fib_index.md)
 - [Updating this documentation](./documentation.md)
+
+
+> Last Updated: {% last_modified_at %}

@@ -11,3 +11,11 @@ header_pages:
   - README.md
   - setup.md
   - documentation.md
+
+# Used to add the last modified date in each note
+plugins:
+  - jekyll-last-modified-at
+
+# Optional. The default date format, used if none is specified in the tag.
+last-modified-at:
+    date-format: '%b %-d, %Y'
