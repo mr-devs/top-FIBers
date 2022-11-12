@@ -1,3 +1,5 @@
+> Last updated: {{ "now" }}
+
 A project to find and rank the top superspreaders of misinformation on Twitter using the [FIB-index](./fib_index.md).
 
 This site makes up the official documentation of everything that is needed to know about the project.
@@ -13,6 +15,3 @@ This site makes up the official documentation of everything that is needed to kn
 - [Input data](./data.md)
 - [FIB-index](./fib_index.md)
 - [Updating this documentation](./documentation.md)
-
-
-> Last updated: {{ "now" | date: "%Y-%m-%d %H:%M" }}
