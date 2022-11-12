@@ -1,7 +1,7 @@
 ---
 title: "Updating this documentation"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S" (%Z)}}
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
 
 The documentation on this site is rendered automatically by [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 
@@ -26,7 +26,12 @@ Some general organization conventions:
     ---
     ```
 - Note: The quotes are needed in the title above
-
+4. **Include a timestamp**
+Include the below line at the top of every file (under the "front matter").
+```
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+```
+In the above line `"now"` tells the system to grab the current time _whenever the site's page is rendered_ and then the right side `date: "%Y-%m-%d --- %H:%M:%S"` provides it the format you render that time.
 
 ### Example markdown file
 
@@ -36,6 +41,8 @@ The page that you are currently reading is named `documentation.md` within the G
 ---
 title: "Updating this documentation"
 ---
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+
 The documentation on this site is rendered automatically by [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 
 **Adding a new page to this documentation is as simple as creating a [markdown file](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) (extension `.md`).**

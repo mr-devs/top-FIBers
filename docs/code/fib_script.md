@@ -1,7 +1,7 @@
 ---
 title: "Understanding how the FIB script works"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S" (%Z)}}
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
 
 The [FIB-index](../fib_index.md) is a simple yet effective metric for estimating a social media user's influence within a misinformation network on a given platform.
 

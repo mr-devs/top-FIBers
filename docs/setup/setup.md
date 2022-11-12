@@ -1,7 +1,7 @@
 ---
 title: "Setting up the project"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S" (%Z)}}
+> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
 
 This project requires two steps to get things ready to run.
 
