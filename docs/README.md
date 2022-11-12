@@ -15,9 +15,4 @@ This site makes up the official documentation of everything that is needed to kn
 - [Updating this documentation](./documentation.md)
 
 
-{%- assign date_format = site.minima.date_format | default: '%b %-d, %Y' -%}
-{%- if page.last_modified_at -%}
-    Last updated: {%- page.last_modified_at | date: date_format -%}
-{%- else -%}
-    Last updated: {%- page.date | date: date_format -%}
-{%- endif -%}
+> Last updated: {{ "now" | date: "%Y-%m-%d %H:%M" }}
