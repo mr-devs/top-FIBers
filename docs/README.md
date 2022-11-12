@@ -1,6 +1,3 @@
----
-title: "Top FIBers project documentation"
----
 A project to find and rank the top superspreaders of misinformation on Twitter using the [FIB-index](./fib_index.md).
 
 This site makes up the official documentation of everything that is needed to know about the project.
