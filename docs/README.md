@@ -1,4 +1,4 @@
-> Last updated: {{ "now" }}
+> Last updated: {{ "now" | date: "%Y-%m-%d  %H:%M:%S"}}
 
 A project to find and rank the top superspreaders of misinformation on Twitter using the [FIB-index](./fib_index.md).
 

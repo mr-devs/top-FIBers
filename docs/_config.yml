@@ -10,9 +10,5 @@ header_pages:
   - setup.md
   - documentation.md
 
-# The default date for minima, used if none is specified in the tag.
-minima:
-  date_format: "%b %-d, %Y"
-
 theme: minima
 # remote_theme: pages-themes/minimal@v0.2.0
