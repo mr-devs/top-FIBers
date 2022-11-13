@@ -1,5 +1,5 @@
 ---
-title: "Overview of how the code works"
+title: "Understanding the project workflow"
 last_modified: "2022-11-13"
 ---
 > Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
