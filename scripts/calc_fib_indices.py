@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
 Purpose:
-    Calculate the FIB index for all users present in all data files input to this script.
+    Calculate the FIB index for all users present in tweet files output by Moe's
+    Tavern.
 
 Input:
-    One or more new-line delimited JSON files that contain a Twitter V1 API tweet object
-    on each line.
+    FULL PATH to the top-level directories created by a Moe's Tavern query.
+    This script parses the actual tweetContent files (part-m-XXXXX) files from
+    those directories by grabbing all paths that contain the MATCHING_STR constant
+    defined below.
 
     NOTE: Call the calc_fib_indices.py -h flag to get input/flag details.
 
@@ -24,7 +27,6 @@ What is the FIB-index?
 
 Author: Matthew DeVerna
 """
-
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Load Packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import datetime
 import gzip
@@ -35,10 +37,10 @@ import pandas as pd
 
 from collections import defaultdict, Counter
 from top_fibers_pkg.data_model import Tweet_v1
-from top_fibers_pkg import calc_fib_index, parse_cl_args
+from top_fibers_pkg import calc_fib_index, parse_cl_args, retrieve_paths_from_dir
 
 SCRIPT_PURPOSE = "Calculate FIB indices for all users present in the provided data."
-
+MATCHING_STR = "part*.gz"
 
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def load_tweets(data_files):
@@ -231,10 +233,20 @@ def create_fib_frame(userid_rt_count_lists, userid_username):
 if __name__ == "__main__":
     # Parse input flags
     args = parse_cl_args(SCRIPT_PURPOSE)
-    data_files = args.data
+    data_dirs = args.data
     output_dir = args.out_dir
     if output_dir is None:
         output_dir = "."
+
+    # Retrieve all paths to data files
+    data_files = []
+    for data_dir in data_dirs:
+        lst_data_files = retrieve_paths_from_dir(data_dir, matching_str=MATCHING_STR)
+        data_files.extend(lst_data_files)
+    
+    print("Data files that will be processed:")
+    for f in data_files:
+        print(f"\t- {f}")
 
     # Wrangle data and calculate FIB indices
     tweetid_max_rts, userid_tweetids, userid_username = load_tweets(data_files)
