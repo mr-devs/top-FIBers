@@ -13,8 +13,10 @@ def parse_cl_args(script_purpose):
 
     # Add long and short argument
     msg = (
-        "One or more paths to the files you would like to parse. "
-        "(Should be output from Moe's Tavern - new-line delimited json.gz)"
+        "One or more paths to directories that contain tweet files. "
+        "Should be the top-level directory containing output from Moe's Tavern. "
+        "Tweet content files in the sub directories of these directories should "
+        "be new-line delimited json.gz"
     )
     parser.add_argument(
         "-d",
