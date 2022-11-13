@@ -42,7 +42,7 @@ What we are doing is setting a text string that can be accessed via `page.last_m
 
 
 ### Example markdown file
-The page that you are currently reading is named `documentation.md` within the GitHub reposityory and begins in the following way:
+The page that you are currently reading is named `documentation.md` within the GitHub repository and begins in the following way:
 
 ```
 ---
