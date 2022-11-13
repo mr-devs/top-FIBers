@@ -1,7 +1,8 @@
 ---
 title: "Updating this documentation"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 The documentation on this site is rendered automatically by [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 
@@ -26,22 +27,29 @@ Some general organization conventions:
     ---
     ```
 - Note: The quotes are needed in the title above
-4. **Include a timestamp**
-Include the below line at the top of every file (under the "front matter").
+4. **Include the date when you created/updated that documentation page**
+Include the `last_modified` variable in the front matter with the date you update the file.
+Then, right under it, include a "Last modified" note.
+It should look like the below...
 ```
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+---
+title: "The title for your documentation page goes here"
+last_modified: "2022-11-13"
+---
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 ```
-In the above line `"now"` tells the system to grab the current time _whenever the site's page is rendered_ and then the right side `date: "%Y-%m-%d --- %H:%M:%S"` provides it the format you render that time.
+What we are doing is setting a text string that can be accessed via `page.last_modified` and then it is converted into whatever format we dictate to the right of the pipe (`date: "%Y-%m-%d"`).
+
 
 ### Example markdown file
-
 The page that you are currently reading is named `documentation.md` within the GitHub reposityory and begins in the following way:
 
 ```
 ---
 title: "Updating this documentation"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 The documentation on this site is rendered automatically by [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 

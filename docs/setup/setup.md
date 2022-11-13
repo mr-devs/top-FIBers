@@ -1,7 +1,8 @@
 ---
 title: "Setting up the project"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 This project requires two steps to get things ready to run.
 

@@ -1,7 +1,8 @@
 ---
 title: "Overview of how the code works"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 There are three general processes that take place for the project to run.
 

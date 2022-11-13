@@ -1,7 +1,8 @@
 ---
 title: "Data"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 This project utilizes data that is output by the Observatory on Social Media's (OSoMe) Decahose infrastructure.
 - [Learn more about OSoMe](https://osome.iu.edu/)

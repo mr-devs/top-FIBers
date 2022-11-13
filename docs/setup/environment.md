@@ -1,7 +1,8 @@
 ---
 title: "Setting up the conda environment"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 The easiest way to make sure that everything will run for you is to install that latest version of [Miniconda](https://docs.conda.io/projects/conda/en/latest/index.html) and then utilize the `conda` package manager to install one of the environment files saved inside of the `environments/` directory.
 

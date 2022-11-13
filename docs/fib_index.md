@@ -1,7 +1,8 @@
 ---
 title: "FIB-index"
+last_modified: "2022-11-13"
 ---
-> Last updated: {{ "now" | date: "%Y-%m-%d --- %H:%M:%S"}}
+> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
 The FIB-index is a simple yet effective metric for estimating a social media user's influence within a misinformation network on a given platform.
 
