@@ -12,7 +12,7 @@ This site makes up the official documentation of everything that is needed to kn
     - [Setting up an environment](./setup/environment.md)
     - [Local package install (required)](./setup/package_install.md)
 - [Understanding the project workflow](./code/overview.md)
-    - [Understanding how the FIB script works](./code/fib_script.md)
+    - [Understanding how `calc_fib_indices.py` works](./code/fib_script.md)
     - [Understanding `top_fibers_pkg`](./code/top_fibers_pkg.md)
 - [Input data](./data.md)
 - [FIB-index](./fib_index.md)

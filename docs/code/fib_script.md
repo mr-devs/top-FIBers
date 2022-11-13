@@ -1,5 +1,5 @@
 ---
-title: "Understanding how the FIB script works"
+title: "Understanding how `calc_fib_indices.py` works"
 last_modified: "2022-11-13"
 ---
 > Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
