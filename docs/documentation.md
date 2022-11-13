@@ -49,7 +49,7 @@ The page that you are currently reading is named `documentation.md` within the G
 title: "Updating this documentation"
 last_modified: "2022-11-13"
 ---
-> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
+> Last modified: {% raw  %}{{ page.last_modified | date: "%Y-%m-%d"}}{% endraw  %}
 
 The documentation on this site is rendered automatically by [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
 
