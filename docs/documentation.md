@@ -36,7 +36,7 @@ It should look like the below...
 title: "The title for your documentation page goes here"
 last_modified: "2022-11-13"
 ---
-> Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
+> Last modified: {% raw  %}{{ page.last_modified | date: "%Y-%m-%d"}}{% endraw  %}
 ```
 What we are doing is setting a text string that can be accessed via `page.last_modified` and then it is converted into whatever format we dictate to the right of the pipe (`date: "%Y-%m-%d"`).
 
