@@ -42,6 +42,9 @@ from top_fibers_pkg import calc_fib_index, parse_cl_args, retrieve_paths_from_di
 SCRIPT_PURPOSE = "Calculate FIB indices for all users present in the provided data."
 MATCHING_STR = "part*.gz"
 
+# NOTE: Take the top 50 FIBers AND top 50 most retweeted users (so we'll get more than 50 accounts)
+NUM_TOP_USERS = 50
+
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def load_tweets(data_files):
     """
@@ -69,6 +72,7 @@ def load_tweets(data_files):
     if not all(isinstance(path, str) for path in data_files):
         raise TypeError("All `data_files` must be a string!")
 
+    tweetid_timestamp = dict()
     tweetid_max_rts = defaultdict(int)
     userid_tweetids = defaultdict(set)
     userid_username = dict()
@@ -89,6 +93,7 @@ def load_tweets(data_files):
 
                     # Parse the base-level tweet
                     tweet_id = tweet.get_post_ID()
+                    timestamp = tweet.get_created_at_time(timestamp=True)
                     user_id = tweet.get_user_ID()
                     username = tweet.get_user_sreenname()
 
@@ -98,6 +103,7 @@ def load_tweets(data_files):
                         rt_count = prev_rt_val
 
                     # Store the data
+                    tweetid_timestamp[tweet_id] = timestamp
                     tweetid_max_rts[tweet_id] = rt_count
                     userid_tweetids[user_id].add(tweet_id)
                     userid_username[user_id] = username
@@ -105,6 +111,7 @@ def load_tweets(data_files):
                     # Handle retweets
                     if tweet.is_retweet:
                         tweet_id = tweet.retweet_object.get_post_ID()
+                        timestamp = tweet.retweet_object.get_created_at_time(timestamp=True)
                         user_id = tweet.retweet_object.get_user_ID()
                         username = tweet.retweet_object.get_user_sreenname()
 
@@ -114,6 +121,7 @@ def load_tweets(data_files):
                             rt_count = prev_rt_val
 
                         # Store the data
+                        tweetid_timestamp[tweet_id] = timestamp
                         tweetid_max_rts[tweet_id] = rt_count
                         userid_tweetids[user_id].add(tweet_id)
                         userid_username[user_id] = username
@@ -121,6 +129,7 @@ def load_tweets(data_files):
                     # Handle quotes
                     if tweet.is_quote:
                         tweet_id = tweet.quote_object.get_post_ID()
+                        timestamp = tweet.quote_object.get_created_at_time(timestamp=True)
                         user_id = tweet.quote_object.get_user_ID()
                         username = tweet.quote_object.get_user_sreenname()
 
@@ -130,6 +139,7 @@ def load_tweets(data_files):
                             rt_count = prev_rt_val
 
                         # Store the data
+                        tweetid_timestamp[tweet_id] = timestamp
                         tweetid_max_rts[tweet_id] = rt_count
                         userid_tweetids[user_id].add(tweet_id)
                         userid_username[user_id] = username
@@ -139,7 +149,7 @@ def load_tweets(data_files):
         print(f"Total Tweets Ingested = {num_tweets}")
         print(f"Total Number of Users = {num_users}")
 
-        return dict(tweetid_max_rts), dict(userid_tweetids), userid_username
+        return dict(tweetid_max_rts), dict(userid_tweetids), userid_username, tweetid_timestamp
 
     # Raise this error if something weird happens loading the data
     except Exception as e:
@@ -249,7 +259,7 @@ if __name__ == "__main__":
         print(f"\t- {f}")
 
     # Wrangle data and calculate FIB indices
-    tweetid_max_rts, userid_tweetids, userid_username = load_tweets(data_files)
+    tweetid_max_rts, userid_tweetids, userid_username, tweetid_timestamp = load_tweets(data_files)
     userid_rt_count_lists, userid_rt_counts = create_userid_rt_counts(
         tweetid_max_rts, userid_tweetids
     )
@@ -261,11 +271,34 @@ if __name__ == "__main__":
         by="total_retweets", ascending=False, inplace=True
     )
     fib_frame = fib_frame.merge(userid_rt_counts_frame, on="user_id")
+    
+    # Get top 50 users with most total retweets
+    fib_frame.sort_values(by="total_retweets", ascending=False, inplace=True)
+    top_50_rts = list(fib_frame["user_id"].head(NUM_TOP_USERS))
+
+    # Get top 50 users with the highest FIB indices
     fib_frame.sort_values(by="fib_index", ascending=False, inplace=True)
+    top_50_fibers = list(fib_frame["user_id"].head(NUM_TOP_USERS))
+
+    # Combine them into one set and create records for each tweet
+    hitlist = set(top_50_fibers + top_50_rts)
+    hitlist_records = []
+    for user_id in hitlist:
+        user_tweetids = userid_tweetids[user_id]
+        for tid in user_tweetids:
+            hitlist_records.append({
+                "user_id" : user_id,
+                "tweet_id" : tid,
+                "num_rts" : tweetid_max_rts[tid],
+                "timestamp" : tweetid_timestamp[tid],
+            })
+    hitlist_df = pd.DataFrame.from_records(hitlist_records)
 
     # Save files
     today = datetime.datetime.now().strftime("%Y_%m_%d")
     output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices.parquet")
+    output_rt_fname = os.path.join(output_dir, f"{today}__hitlist_rts.parquet")
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
+    hitlist_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
 
     print("Script Complete.")
