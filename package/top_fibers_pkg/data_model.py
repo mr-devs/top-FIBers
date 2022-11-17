@@ -2,6 +2,9 @@
 A very simple data class that is used to extract the information needed in the
 calc_fib_indices.py script.
 """
+import datetime
+import pytz
+
 from .utils import get_dict_val
 
 
@@ -27,6 +30,12 @@ class PostBase:
     def is_valid(self):
         """
         Check if the data is valid
+        """
+        raise NotImplementedError
+
+    def get_created_at_time(self):
+        """
+        Get time a post is created.
         """
         raise NotImplementedError
 
@@ -140,6 +149,28 @@ class Tweet_v1(PostBase):
             if attribute not in self.post_object:
                 return False
         return True
+
+    def get_created_at_time(self, timestamp=False):
+        """
+        Return the "created_at" post time of a post.
+
+        Parameters:
+        -----------
+        timestamp (bool): whether or not to return the created_at time as a timestamp
+
+        Returns:
+        -----------
+        - post_time (str): if timestamp=False, return "created_at" time as is. If
+            timestamp=True, first convert "created_at" time to a timestamp
+        """
+        created_at = self.get_value(["created_at"])
+        if not timestamp:
+            return created_at
+        try:
+            dt_obj = datetime.datetime.strptime(created_at, "%a %b %d %H:%M:%S %z %Y")
+            return str(int(dt_obj.timestamp()))
+        except:
+            return None
 
     def get_rt_count(self):
         """
