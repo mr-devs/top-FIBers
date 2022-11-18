@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .error {
+        color: red;
+    }
+  </style>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega@5"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-lite@4.17.0"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm//vega-embed@6"></script>
+</head>
+<body>
+  <div id="vis"></div>
+  <script>
+    (function(vegaEmbed) {
+      var spec = {"config": {"view": {"continuousWidth": 400, "continuousHeight": 300}, "axis": {"labelFontSize": 14, "titleFontSize": 15}, "title": {"fontSize": 16}}, "vconcat": [{"mark": "point", "encoding": {"href": {"field": "post_link", "type": "nominal"}, "tooltip": [{"field": "num_rts", "format": ",", "title": "Num. RTs", "type": "quantitative"}, {"field": "dts", "title": "Date posted", "type": "temporal"}], "x": {"field": "dts", "scale": {"domain": {"selection": "selector186"}}, "title": null, "type": "temporal"}, "y": {"field": "num_rts", "title": "Number of retweets", "type": "quantitative"}}, "title": "@RepMTG low-credibility posts", "width": 650}, {"mark": {"type": "bar", "color": "black", "opacity": 1}, "encoding": {"x": {"field": "dts", "timeUnit": "yearmonthdate", "title": "When low cred. post was shared", "type": "temporal"}, "y": {"aggregate": "count", "title": ["Num.", "posts"], "type": "quantitative"}}, "height": 60, "selection": {"selector186": {"type": "interval", "encodings": ["x"]}}, "title": "select date range below to highlight above", "width": 650}], "data": {"name": "data-3f1d98d49b885600e73a489f88dcea79"}, "usermeta": {"embedOptions": {"loader": {"target": "_blank"}}}, "$schema": "https://vega.github.io/schema/vega-lite/v4.17.0.json", "datasets": {"data-3f1d98d49b885600e73a489f88dcea79": [{"user_id": "1344356576786866176", "tweet_id": "1555589589070499841", "num_rts": 3254, "timestamp": "1659716434", "dts": "2022-08-05T16:20:34", "post_link": "https://twitter.com/i/status/1555589589070499841"}, {"user_id": "1344356576786866176", "tweet_id": "1495533736842219522", "num_rts": 559, "timestamp": "1645398003", "dts": "2022-02-20T23:00:03", "post_link": "https://twitter.com/i/status/1495533736842219522"}, {"user_id": "1344356576786866176", "tweet_id": "1577512361417654272", "num_rts": 3432, "timestamp": "1664943230", "dts": "2022-10-05T04:13:50", "post_link": "https://twitter.com/i/status/1577512361417654272"}, {"user_id": "1344356576786866176", "tweet_id": "1580582139782778882", "num_rts": 362, "timestamp": "1665675122", "dts": "2022-10-13T15:32:02", "post_link": "https://twitter.com/i/status/1580582139782778882"}, {"user_id": "1344356576786866176", "tweet_id": "1577307714966921219", "num_rts": 2778, "timestamp": "1664894438", "dts": "2022-10-04T14:40:38", "post_link": "https://twitter.com/i/status/1577307714966921219"}, {"user_id": "1344356576786866176", "tweet_id": "1570467945997901831", "num_rts": 3906, "timestamp": "1663263710", "dts": "2022-09-15T17:41:50", "post_link": "https://twitter.com/i/status/1570467945997901831"}, {"user_id": "1344356576786866176", "tweet_id": "1563965496139063301", "num_rts": 783, "timestamp": "1661713406", "dts": "2022-08-28T19:03:26", "post_link": "https://twitter.com/i/status/1563965496139063301"}, {"user_id": "1344356576786866176", "tweet_id": "1580582128122617856", "num_rts": 492, "timestamp": "1665675119", "dts": "2022-10-13T15:31:59", "post_link": "https://twitter.com/i/status/1580582128122617856"}, {"user_id": "1344356576786866176", "tweet_id": "1553731376641441792", "num_rts": 3141, "timestamp": "1659273401", "dts": "2022-07-31T13:16:41", "post_link": "https://twitter.com/i/status/1553731376641441792"}, {"user_id": "1344356576786866176", "tweet_id": "1580582133688864774", "num_rts": 109, "timestamp": "1665675121", "dts": "2022-10-13T15:32:01", "post_link": "https://twitter.com/i/status/1580582133688864774"}, {"user_id": "1344356576786866176", "tweet_id": "1557556617503285250", "num_rts": 3167, "timestamp": "1660185410", "dts": "2022-08-11T02:36:50", "post_link": "https://twitter.com/i/status/1557556617503285250"}, {"user_id": "1344356576786866176", "tweet_id": "1572261275417153536", "num_rts": 13780, "timestamp": "1663691273", "dts": "2022-09-20T16:27:53", "post_link": "https://twitter.com/i/status/1572261275417153536"}, {"user_id": "1344356576786866176", "tweet_id": "1564025035110592512", "num_rts": 933, "timestamp": "1661727601", "dts": "2022-08-28T23:00:01", "post_link": "https://twitter.com/i/status/1564025035110592512"}, {"user_id": "1344356576786866176", "tweet_id": "1563698113050722307", "num_rts": 1789, "timestamp": "1661649656", "dts": "2022-08-28T01:20:56", "post_link": "https://twitter.com/i/status/1563698113050722307"}, {"user_id": "1344356576786866176", "tweet_id": "1562816814349856770", "num_rts": 241, "timestamp": "1661439538", "dts": "2022-08-25T14:58:58", "post_link": "https://twitter.com/i/status/1562816814349856770"}, {"user_id": "1344356576786866176", "tweet_id": "1578794219916836864", "num_rts": 574, "timestamp": "1665248849", "dts": "2022-10-08T17:07:29", "post_link": "https://twitter.com/i/status/1578794219916836864"}, {"user_id": "1344356576786866176", "tweet_id": "1569330041389223936", "num_rts": 3152, "timestamp": "1662992413", "dts": "2022-09-12T14:20:13", "post_link": "https://twitter.com/i/status/1569330041389223936"}, {"user_id": "1344356576786866176", "tweet_id": "1587069494807203847", "num_rts": 873, "timestamp": "1667221828", "dts": "2022-10-31T13:10:28", "post_link": "https://twitter.com/i/status/1587069494807203847"}, {"user_id": "1344356576786866176", "tweet_id": "1580297479337431040", "num_rts": 3603, "timestamp": "1665607254", "dts": "2022-10-12T20:40:54", "post_link": "https://twitter.com/i/status/1580297479337431040"}, {"user_id": "1344356576786866176", "tweet_id": "1555633892551450626", "num_rts": 204, "timestamp": "1659726996", "dts": "2022-08-05T19:16:36", "post_link": "https://twitter.com/i/status/1555633892551450626"}, {"user_id": "1344356576786866176", "tweet_id": "1559311933710499842", "num_rts": 795, "timestamp": "1660603910", "dts": "2022-08-15T22:51:50", "post_link": "https://twitter.com/i/status/1559311933710499842"}, {"user_id": "1344356576786866176", "tweet_id": "1580979904249667584", "num_rts": 5334, "timestamp": "1665769957", "dts": "2022-10-14T17:52:37", "post_link": "https://twitter.com/i/status/1580979904249667584"}]}};
+      var embedOpt = {"mode": "vega-lite"};
+
+      function showError(el, error){
+          el.innerHTML = ('<div class="error" style="color:red;">'
+                          + '<p>JavaScript Error: ' + error.message + '</p>'
+                          + "<p>This usually means there's a typo in your chart specification. "
+                          + "See the javascript console for the full traceback.</p>"
+                          + '</div>');
+          throw error;
+      }
+      const el = document.getElementById('vis');
+      vegaEmbed("#vis", spec, embedOpt)
+        .catch(error => showError(el, error));
+    })(vegaEmbed);
+
+  </script>
+</body>
+</html>
