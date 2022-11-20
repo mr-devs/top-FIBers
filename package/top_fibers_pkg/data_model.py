@@ -7,6 +7,10 @@ import pytz
 
 from .utils import get_dict_val
 
+TWITTER_V1_DT_CONVERSION_STR = "%a %b %d %H:%M:%S %z %Y"
+TWITTER_V2_DT_CONVERSION_STR = None # TODO: Update when V2 added
+CROWDTANGLE_DT_CONVERSION_STR = "%Y-%m-%d %H:%M:%S"
+
 
 class PostBase:
     """
@@ -149,7 +153,7 @@ class Tweet_v1(PostBase):
         if not timestamp:
             return created_at
         try:
-            dt_obj = datetime.datetime.strptime(created_at, "%a %b %d %H:%M:%S %z %Y")
+            dt_obj = datetime.datetime.strptime(created_at, TWITTER_V1_DT_CONVERSION_STR)
             return str(int(dt_obj.timestamp()))
         except:
             return None
@@ -198,6 +202,7 @@ class Tweet_v1(PostBase):
             ]
         )
 
+
 ### Post base for Twitter V2 tweet object
 # Reference: https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/tweet
 # TODO: Update when Decahose begins returning V2
@@ -215,3 +220,94 @@ class Tweet_v2(PostBase):
             - tweet_object (dict): the JSON object of a tweet
         """
         super().__init__(tweet_object)
+
+
+class FbIgPost:
+    """
+    Class to handle CrowdTangle Facebook and Instagram post objects returned by
+    the /posts/search endpoint.
+    Endpoint Ref: https://github.com/CrowdTangle/API/wiki/Search
+    Response Ref: https://github.com/CrowdTangle/API/wiki/Search#response
+    """
+
+    def __init__(self, post_object):
+        """
+        This function initializes the instance by binding the post_object
+        Parameters:
+            - post_object (dict): the JSON object of the social media post
+        """
+        if post_object is None:
+            raise ValueError("The post object cannot be None")
+        self.post_object = post_object
+
+        self.platform = self.post_object.get_value(["platform"])
+        self.is_fb_post = True if self.platform == "Facebook" else False
+        self.is_ig_post = True if self.platform == "Instagram" else False
+
+    def is_valid(self):
+        """
+        Check if the post object is valid.
+        At minimum, it should have a post "id"
+        """
+        if "id" not in self.post_object:
+            return False
+        return True
+
+    def get_post_time(self, timestamp=False):
+        """
+        Return the "date" field, indicating when a post was sent.
+
+        Parameters:
+        -----------
+        timestamp (bool): whether or not to return the "date" time as a timestamp
+
+        Returns:
+        -----------
+        - post_time (str): if timestamp=False, return "date" time as is. If
+            timestamp=True, first convert "date" time to a timestamp
+        """
+        created_at = self.get_value(["date"])
+        if not timestamp:
+            return created_at
+        try:
+            dt_obj = datetime.datetime.strptime(created_at, CROWDTANGLE_DT_CONVERSION_STR)
+            return str(int(dt_obj.timestamp()))
+        except:
+            return None
+
+    def get_reshare_count(self):
+        """
+        Return the number of times that the post was reshared
+        """
+        return NotImplementedError
+
+    def get_post_ID(self):
+        """
+        Return the ID of the post as a string
+        """
+        raise NotImplementedError
+
+    def get_link_to_post(self):
+        """
+        Return the link to the post so that one can click it and check
+        the post in a web browser
+        """
+        raise NotImplementedError
+
+    def get_user_ID(self):
+        """
+        Return the ID of the user as a string
+        """
+        raise NotImplementedError
+
+    def get_user_sreenname(self):
+        """
+        Return the screen_name of the user (str)
+        """
+        return NotImplementedError
+
+    def __repr__(self):
+        """
+        Define the representation of the object.
+        """
+        return f"<{self.__class__.__name__}() object>"
