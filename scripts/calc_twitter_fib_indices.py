@@ -44,7 +44,10 @@ from collections import defaultdict, Counter
 from top_fibers_pkg.data_model import Tweet_v1
 from top_fibers_pkg import calc_fib_index, parse_cl_args, retrieve_paths_from_dir
 
-SCRIPT_PURPOSE = "Calculate FIB indices for all users present in the provided data."
+SCRIPT_PURPOSE = (
+    "Return the FIB indices for all users present in the provided data "
+    "as well as the posts sent by the worst misinformation spreaders."
+)
 MATCHING_STR = "part*.gz"
 
 # NOTE: Take the top 50 FIBers AND top 50 most retweeted users (so we'll get more than 50 accounts)
