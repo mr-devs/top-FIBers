@@ -222,7 +222,7 @@ class Tweet_v2(PostBase):
         super().__init__(tweet_object)
 
 
-class FbIgPost:
+class FbIgPost(PostBase):
     """
     Class to handle CrowdTangle Facebook and Instagram post objects returned by
     the /posts/search endpoint.
@@ -236,11 +236,13 @@ class FbIgPost:
         Parameters:
             - post_object (dict): the JSON object of the social media post
         """
+        super().__init__(post_object)
+
         if post_object is None:
             raise ValueError("The post object cannot be None")
         self.post_object = post_object
 
-        self.platform = self.post_object.get_value(["platform"])
+        self.platform = self.get_value(["platform"])
         self.is_fb_post = True if self.platform == "Facebook" else False
         self.is_ig_post = True if self.platform == "Instagram" else False
 
@@ -292,7 +294,7 @@ class FbIgPost:
         Return the link to the post so that one can click it and check
         the post in a web browser
         """
-        raise self.get_value(["postUrl"])
+        return self.get_value(["postUrl"])
 
     def get_user_ID(self):
         """
