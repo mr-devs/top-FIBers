@@ -14,11 +14,11 @@ Input:
 
 Output:
     Two .parquet files containing:
-    1. {YYYY_mm_dd}__fib_indices.parquet: a pandas dataframe with the following columns:
+    1. {YYYY_mm_dd}__fib_indices_twitter.parquet: a pandas dataframe with the following columns:
         - user_id (str) : a unique Twitter user ID
         - fib_index (int) : a specific user's FIB index
         - total_retweets (int) : a specific user's FIB index
-    2. {YYYY_mm_dd}____hitlist_rts.parquet: a pandas dataframe with the following columns:
+    2. {YYYY_mm_dd}__hitlist_posts_twitter.parquet: a pandas dataframe with the following columns:
         - user_id (str) : a unique Twitter user ID
         - tweet_id (str) : a unique Twitter post ID
         - num_rts (int) : the number of retweets tweet_id earned
@@ -301,8 +301,8 @@ if __name__ == "__main__":
 
     # Save files
     today = datetime.datetime.now().strftime("%Y_%m_%d")
-    output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices.parquet")
-    output_rt_fname = os.path.join(output_dir, f"{today}__hitlist_rts.parquet")
+    output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices_twitter.parquet")
+    output_rt_fname = os.path.join(output_dir, f"{today}__hitlist_posts_twitter.parquet")
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
     hitlist_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
 
