@@ -18,6 +18,11 @@ Output:
         - user_id (str) : a unique Twitter user ID
         - fib_index (int) : a specific user's FIB index
         - total_retweets (int) : a specific user's FIB index
+    2. {YYYY_mm_dd}____hitlist_rts.parquet: a pandas dataframe with the following columns:
+        - user_id (str) : a unique Twitter user ID
+        - tweet_id (str) : a unique Twitter post ID
+        - num_rts (int) : the number of retweets tweet_id earned
+        - tiemstamp (str) : timestamp when post was sent
 
     NOTE: YYYY_mm_dd will be representative of the machine's current date
 
