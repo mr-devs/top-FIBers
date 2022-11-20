@@ -78,35 +78,15 @@ class PostBase:
         """
         raise NotImplementedError
 
-    def get_retweeted_post_ID(self):
-        """
-        Return the post ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        raise NotImplementedError
-
     def get_user_ID(self):
         """
         Return the ID of the user as a string
         """
         raise NotImplementedError
 
-    def get_retweeted_user_ID(self):
-        """
-        Return the user ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        raise NotImplementedError
-
     def get_user_sreenname(self):
         """
         Return the screen_name of the user (str)
-        """
-        return NotImplementedError
-
-    def get_retweeted_user_sreenname(self):
-        """
-        Return the screen_name (str) of the user in the retweeted_status
         """
         return NotImplementedError
 
@@ -117,9 +97,13 @@ class PostBase:
         return f"<{self.__class__.__name__}() object>"
 
 
+### Post base for Twitter V1 tweet object
+# Reference: https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
+############################################
 class Tweet_v1(PostBase):
     """
     Class to handle tweet object (V1 API)
+    Ref: https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
     """
 
     def __init__(self, tweet_object):
@@ -193,43 +177,17 @@ class Tweet_v1(PostBase):
         """
         return f"https://twitter.com/{self.get_user_sreenname()}/status/{self.get_post_ID()}"
 
-    def get_retweeted_post_ID(self):
-        """
-        Return the post ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        if self.is_retweet:
-            return self.retweet_object.get_post_ID()
-        return None
-
     def get_user_ID(self):
         """
         Return the ID of the base-level user (str)
         """
         return self.get_value(["user", "id_str"])
 
-    def get_retweeted_user_ID(self):
-        """
-        Return the user ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        if self.is_retweet:
-            return self.retweet_object.get_user_ID()
-        return None
-
     def get_user_sreenname(self):
         """
         Return the screen_name of the user (str)
         """
         return self.get_value(["user", "screen_name"])
-
-    def get_retweeted_user_sreenname(self):
-        """
-        Return the screen_name (str) of the user in the retweeted_status
-        """
-        if self.is_retweet:
-            return self.retweet_object.get_user_sreenname()
-        return None
 
     def __repr__(self):
         """
@@ -241,3 +199,21 @@ class Tweet_v1(PostBase):
                 f"Link: {self.get_link_to_post()}",
             ]
         )
+
+### Post base for Twitter V2 tweet object
+# Reference: https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/tweet
+# TODO: Update when Decahose begins returning V2
+############################################
+class Tweet_v2(PostBase):
+    """
+    Class to handle tweet object (V2 API)
+    Ref: https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/tweet
+    """
+
+    def __init__(self, tweet_object):
+        """
+        This function initializes the instance by binding the tweet_object
+        Parameters:
+            - tweet_object (dict): the JSON object of a tweet
+        """
+        super().__init__(tweet_object)
