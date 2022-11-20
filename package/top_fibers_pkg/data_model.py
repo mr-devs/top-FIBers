@@ -13,8 +13,6 @@ class PostBase:
     Base class for social media post.
     Classes for specific platforms can inherit it.
     It defines the common functions that the children classes should have.
-    Should we want to update for V2, simply copy the Tweet_v1 class, create a
-    Tweet_v2 class, and then update the functions.
     """
 
     def __init__(self, post_object):
@@ -26,18 +24,6 @@ class PostBase:
         if post_object is None:
             raise ValueError("The post object cannot be None")
         self.post_object = post_object
-
-    def is_valid(self):
-        """
-        Check if the data is valid
-        """
-        raise NotImplementedError
-
-    def get_created_at_time(self):
-        """
-        Get time a post is created.
-        """
-        raise NotImplementedError
 
     def get_value(self, key_list: list = []):
         """
@@ -58,6 +44,18 @@ class PostBase:
         - key value (if present) or None (if not present)
         """
         return get_dict_val(self.post_object, key_list)
+
+    def is_valid(self):
+        """
+        Check if the data is valid
+        """
+        raise NotImplementedError
+
+    def get_post_time(self):
+        """
+        Get the time a post was shared.
+        """
+        raise NotImplementedError
 
     def get_reshare_count(self):
         """
@@ -134,7 +132,7 @@ class Tweet_v1(PostBase):
                 return False
         return True
 
-    def get_created_at_time(self, timestamp=False):
+    def get_post_time(self, timestamp=False):
         """
         Return the "created_at" post time of a post.
 

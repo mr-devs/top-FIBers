@@ -93,7 +93,7 @@ def load_tweets(data_files):
 
                     # Parse the base-level tweet
                     tweet_id = tweet.get_post_ID()
-                    timestamp = tweet.get_created_at_time(timestamp=True)
+                    timestamp = tweet.get_post_time(timestamp=True)
                     user_id = tweet.get_user_ID()
                     username = tweet.get_user_sreenname()
 
@@ -111,7 +111,7 @@ def load_tweets(data_files):
                     # Handle retweets
                     if tweet.is_retweet:
                         tweet_id = tweet.retweet_object.get_post_ID()
-                        timestamp = tweet.retweet_object.get_created_at_time(timestamp=True)
+                        timestamp = tweet.retweet_object.get_post_time(timestamp=True)
                         user_id = tweet.retweet_object.get_user_ID()
                         username = tweet.retweet_object.get_user_sreenname()
 
@@ -129,7 +129,7 @@ def load_tweets(data_files):
                     # Handle quotes
                     if tweet.is_quote:
                         tweet_id = tweet.quote_object.get_post_ID()
-                        timestamp = tweet.quote_object.get_created_at_time(timestamp=True)
+                        timestamp = tweet.quote_object.get_post_time(timestamp=True)
                         user_id = tweet.quote_object.get_user_ID()
                         username = tweet.quote_object.get_user_sreenname()
 
