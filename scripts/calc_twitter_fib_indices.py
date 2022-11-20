@@ -22,7 +22,7 @@ Output:
         - user_id (str) : a unique Twitter user ID
         - tweet_id (str) : a unique Twitter post ID
         - num_rts (int) : the number of retweets tweet_id earned
-        - tiemstamp (str) : timestamp when post was sent
+        - timestamp (str) : timestamp when post was sent
 
     NOTE: YYYY_mm_dd will be representative of the machine's current date
 
