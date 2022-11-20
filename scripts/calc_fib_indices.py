@@ -97,7 +97,7 @@ def load_tweets(data_files):
                     user_id = tweet.get_user_ID()
                     username = tweet.get_user_sreenname()
 
-                    rt_count = tweet.get_rt_count()
+                    rt_count = tweet.get_reshare_count()
                     prev_rt_val = tweetid_max_rts[tweet_id]
                     if prev_rt_val > rt_count:
                         rt_count = prev_rt_val
@@ -115,7 +115,7 @@ def load_tweets(data_files):
                         user_id = tweet.retweet_object.get_user_ID()
                         username = tweet.retweet_object.get_user_sreenname()
 
-                        rt_count = tweet.retweet_object.get_rt_count()
+                        rt_count = tweet.retweet_object.get_reshare_count()
                         prev_rt_val = tweetid_max_rts[tweet_id]
                         if prev_rt_val > rt_count:
                             rt_count = prev_rt_val
@@ -133,7 +133,7 @@ def load_tweets(data_files):
                         user_id = tweet.quote_object.get_user_ID()
                         username = tweet.quote_object.get_user_sreenname()
 
-                        rt_count = tweet.quote_object.get_rt_count()
+                        rt_count = tweet.quote_object.get_reshare_count()
                         prev_rt_val = tweetid_max_rts[tweet_id]
                         if prev_rt_val > rt_count:
                             rt_count = prev_rt_val

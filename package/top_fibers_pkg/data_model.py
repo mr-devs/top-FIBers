@@ -59,9 +59,9 @@ class PostBase:
         """
         return get_dict_val(self.post_object, key_list)
 
-    def get_rt_count(self):
+    def get_reshare_count(self):
         """
-        Return the retweet count from this status object
+        Return the number of times that the post was reshared
         """
         return NotImplementedError
 
@@ -156,9 +156,9 @@ class Tweet_v1(PostBase):
         except:
             return None
 
-    def get_rt_count(self):
+    def get_reshare_count(self):
         """
-        Return the retweet count from this status object
+        Return the number of of times this post was reshared (i.e., the retweet count) 
         """
         return self.get_value(["retweet_count"])
 
