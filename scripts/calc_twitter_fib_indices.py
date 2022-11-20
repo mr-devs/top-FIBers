@@ -10,7 +10,7 @@ Input:
     those directories by grabbing all paths that contain the MATCHING_STR constant
     defined below.
 
-    NOTE: Call the calc_fib_indices.py -h flag to get input/flag details.
+    NOTE: Call the calc_twitter_fib_indices.py -h flag to get input/flag details.
 
 Output:
     Two .parquet files containing:
