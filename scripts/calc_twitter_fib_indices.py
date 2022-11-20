@@ -42,7 +42,9 @@ import pandas as pd
 
 from collections import defaultdict, Counter
 from top_fibers_pkg.data_model import Tweet_v1
-from top_fibers_pkg import calc_fib_index, parse_cl_args, retrieve_paths_from_dir
+from top_fibers_pkg import (
+    calc_fib_index, create_fib_frame, parse_cl_args, retrieve_paths_from_dir
+)
 
 SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
@@ -198,49 +200,6 @@ def create_userid_rt_counts(tweetid_max_rts, userid_tweetids):
                 userid_rt_count_lists[userid].append(num_rts)
                 userid_rt_counts[userid] += num_rts
         return userid_rt_count_lists, dict(userid_rt_counts)
-
-    except Exception as e:
-        raise Exception(e)
-
-
-def create_fib_frame(userid_rt_count_lists, userid_username):
-    """
-    Create a dataframe where each row contains a single users identification
-    information and FIB-index.
-
-    Parameters:
-    -----------
-    - userid_rt_count_lists (dict) : {userid_x : list([rt count (int) for each tweetid sent by user_x])}
-    - userid_username (dict) : {userid : username}
-
-    Returns:
-    -----------
-    - fib_frame (pandas.DataFrame) : a dataframe containing the following columns:
-        - user_id (str) : the user's Twitter user ID
-        - username (str) : the user's username/handle
-        - fib_index (int) : the fib index for that user (sorted in descending order)
-
-    Exceptions:
-    -----------
-    - Exception, TypeError
-    """
-    if not isinstance(userid_rt_count_lists, dict):
-        raise TypeError("`userid_rt_count_lists` must be a dict!")
-
-    user_records = []
-    try:
-        for userid, rt_cnt_list in userid_rt_count_lists.items():
-            user_records.append(
-                {
-                    "user_id": userid,
-                    "username": userid_username[userid],
-                    "fib_index": calc_fib_index(rt_cnt_list),
-                }
-            )
-
-        fib_frame = pd.DataFrame.from_records(user_records)
-
-        return fib_frame
 
     except Exception as e:
         raise Exception(e)

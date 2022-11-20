@@ -287,7 +287,7 @@ class FbIgPost(PostBase):
         """
         Return the ID of the post as a string
         """
-        return self.get_value(["id"])
+        return str(self.get_value(["id"]))
 
     def get_link_to_post(self):
         """
@@ -300,7 +300,7 @@ class FbIgPost(PostBase):
         """
         Return the ID of the user as a string
         """
-        return self.get_value(["account", "id"])
+        return str(self.get_value(["account", "id"]))
 
     def get_user_handle(self):
         """
