@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+"""
+Purpose:
+    Calculate the FIB index for all users present in tweet files output by Moe's
+    Tavern.
+
+Input:
+    FULL PATH to the top-level directories created by a Moe's Tavern query.
+    This script parses the actual tweetContent files (part-m-XXXXX) files from
+    those directories by grabbing all paths that contain the MATCHING_STR constant
+    defined below.
+
+    NOTE: Call the calc_twitter_fib_indices.py -h flag to get input/flag details.
+
+Output:
+    Two .parquet files containing:
+    1. {YYYY_mm_dd}__fib_indices_twitter.parquet: a pandas dataframe with the following columns:
+        - user_id (str) : a unique Twitter user ID
+        - fib_index (int) : a specific user's FIB index
+        - total_reshares (int) : total number of reshares earned by user_id
+    2. {YYYY_mm_dd}__top_spreader_posts_twitter.parquet: a pandas dataframe with the following columns:
+        - user_id (str) : a unique Twitter user ID
+        - post_id (str) : a unique Twitter post ID
+        - num_reshares (int) : the number of times post_id was reshared
+        - timestamp (str) : timestamp when post was sent
+
+    NOTE: YYYY_mm_dd will be representative of the machine's current date
+
+What is the FIB-index?
+    Please see our working paper for details.
+    - https://arxiv.org/abs/2207.09524
+
+Author: Matthew DeVerna
+"""
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Load Packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import datetime
+import gzip
+import json
+import os
+
+from collections import defaultdict
+from top_fibers_pkg.data_model import Tweet_v1
+from top_fibers_pkg.utils import parse_cl_args, retrieve_paths_from_dir
+from top_fibers_pkg.fib_helpers import (
+    create_userid_total_reshares,
+    create_userid_reshare_lists,
+    create_fib_frame,
+    get_top_spreaders,
+    create_top_spreader_df,
+)
+
+SCRIPT_PURPOSE = (
+    "Return the FIB indices for all users present in the provided data "
+    "as well as the posts sent by the worst misinformation spreaders."
+)
+MATCHING_STR = "part*.gz"
+
+# NOTE: Set the number of top ranked spreaders to select and which type
+NUM_SPREADERS = 50
+SPREADER_TYPE = "fib_index"  # Options: ["total_reshares", "fib_index"]
+
+
+### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+def extract_data_from_files(data_files):
+    """
+    Load tweet data into three dictionaries that include only the
+    needed information: user IDs/screennames and retweet counts
+
+    Parameters:
+    -----------
+    - data_files(list) : a list of paths to files
+
+    Returns:
+    -----------
+    - tweetid_max_rts (dict) : {tweet_id_str : max number of retweets in data}
+    - userid_tweetids (dict) : {userid_x : set([tweetids sent by userid_x])}
+    - userid_username (dict) : {userid : username}
+        NOTE: the username will be the last one encountered, which will also be
+        the most recent.
+
+    Exceptions:
+    -----------
+    - Exception, TypeError
+    """
+    if not isinstance(data_files, list):
+        raise TypeError("`data_files` must be a list!")
+    if not all(isinstance(path, str) for path in data_files):
+        raise TypeError("All `data_files` must be a string!")
+
+    tweetid_timestamp = dict()
+    tweetid_max_rts = defaultdict(int)
+    userid_tweetids = defaultdict(set)
+    userid_username = dict()
+
+    try:
+        for file in data_files:
+            print(f"Loading tweets from file: {file}...")
+            with gzip.open(file, "rb") as f:
+                for line in f:
+                    tweet = Tweet_v1(json.loads(line.decode()))
+
+                    if not tweet.is_valid():
+                        print("Skipping invalid tweet!!")
+                        print("-" * 50)
+                        print(tweet.post_object)
+                        print("-" * 50)
+                        continue
+
+                    # Parse the base-level tweet
+                    tweet_id = tweet.get_post_ID()
+                    timestamp = tweet.get_post_time(timestamp=True)
+                    user_id = tweet.get_user_ID()
+                    username = tweet.get_user_handle()
+
+                    rt_count = tweet.get_reshare_count()
+                    prev_rt_val = tweetid_max_rts[tweet_id]
+                    if prev_rt_val > rt_count:
+                        rt_count = prev_rt_val
+
+                    # Store the data
+                    tweetid_timestamp[tweet_id] = timestamp
+                    tweetid_max_rts[tweet_id] = rt_count
+                    userid_tweetids[user_id].add(tweet_id)
+                    userid_username[user_id] = username
+
+                    # Handle retweets
+                    if tweet.is_retweet:
+                        tweet_id = tweet.retweet_object.get_post_ID()
+                        timestamp = tweet.retweet_object.get_post_time(timestamp=True)
+                        user_id = tweet.retweet_object.get_user_ID()
+                        username = tweet.retweet_object.get_user_handle()
+
+                        rt_count = tweet.retweet_object.get_reshare_count()
+                        prev_rt_val = tweetid_max_rts[tweet_id]
+                        if prev_rt_val > rt_count:
+                            rt_count = prev_rt_val
+
+                        # Store the data
+                        tweetid_timestamp[tweet_id] = timestamp
+                        tweetid_max_rts[tweet_id] = rt_count
+                        userid_tweetids[user_id].add(tweet_id)
+                        userid_username[user_id] = username
+
+                    # Handle quotes
+                    if tweet.is_quote:
+                        tweet_id = tweet.quote_object.get_post_ID()
+                        timestamp = tweet.quote_object.get_post_time(timestamp=True)
+                        user_id = tweet.quote_object.get_user_ID()
+                        username = tweet.quote_object.get_user_handle()
+
+                        rt_count = tweet.quote_object.get_reshare_count()
+                        prev_rt_val = tweetid_max_rts[tweet_id]
+                        if prev_rt_val > rt_count:
+                            rt_count = prev_rt_val
+
+                        # Store the data
+                        tweetid_timestamp[tweet_id] = timestamp
+                        tweetid_max_rts[tweet_id] = rt_count
+                        userid_tweetids[user_id].add(tweet_id)
+                        userid_username[user_id] = username
+
+        num_tweets = len(tweetid_max_rts.keys())
+        num_users = len(userid_tweetids.keys())
+        print(f"Total Tweets Ingested = {num_tweets}")
+        print(f"Total Number of Users = {num_users}")
+
+        return (
+            dict(tweetid_max_rts),
+            dict(userid_tweetids),
+            userid_username,
+            tweetid_timestamp,
+        )
+
+    # Raise this error if something weird happens loading the data
+    except Exception as e:
+        raise Exception(e)
+
+
+# Execute the program
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+if __name__ == "__main__":
+    # Parse input flags
+    args = parse_cl_args(SCRIPT_PURPOSE)
+    data_dirs = args.data
+    output_dir = args.out_dir
+    if output_dir is None:
+        output_dir = "."
+
+    # Retrieve all paths to data files
+    print("Data will be extracted from here:")
+    data_files = []
+    for data_dir in data_dirs:
+        print(f"\t- {data_dir}")
+        lst_data_files = retrieve_paths_from_dir(data_dir, matching_str=MATCHING_STR)
+        data_files.extend(lst_data_files)
+    num_files = len(data_files)
+    print(f"\nNum. files to process: {num_files}\n")
+
+    # Wrangle data and calculate FIB indices
+    (
+        postid_num_reshares,
+        userid_postids,
+        userid_username,
+        postid_timestamp,
+    ) = extract_data_from_files(data_files)
+
+    print("Creating output dataframes...")
+    userid_total_reshares = create_userid_total_reshares(
+        postid_num_reshares, userid_postids
+    )
+    userid_reshare_lists = create_userid_reshare_lists(
+        postid_num_reshares, userid_postids
+    )
+    fib_frame = create_fib_frame(
+        userid_reshare_lists, userid_username, userid_total_reshares
+    )
+
+    print("Top spreader information:")
+    print(f"\t- Num. spreaders to select   : {NUM_SPREADERS}")
+    print(f"\t- Type of spreaders to select: {SPREADER_TYPE}")
+    top_spreaders = get_top_spreaders(fib_frame, NUM_SPREADERS, SPREADER_TYPE)
+    top_spreader_df = create_top_spreader_df(
+        top_spreaders, userid_postids, postid_num_reshares, postid_timestamp
+    )
+
+    fib_frame = fib_frame.sort_values("fib_index", ascending=False).reset_index(
+        drop=True
+    )
+    top_spreader_df = top_spreader_df.sort_values(
+        "num_reshares", ascending=False
+    ).reset_index(drop=True)
+
+    # Save files
+    print("Saving data...")
+    today = datetime.datetime.now().strftime("%Y_%m_%d")
+    output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices_twitter.parquet")
+    output_rt_fname = os.path.join(
+        output_dir, f"{today}__top_spreader_posts_twitter.parquet"
+    )
+    fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
+    top_spreader_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
+
+    print("Script Complete.")

@@ -7,14 +7,16 @@ import pytz
 
 from .utils import get_dict_val
 
+TWITTER_V1_DT_CONVERSION_STR = "%a %b %d %H:%M:%S %z %Y"
+TWITTER_V2_DT_CONVERSION_STR = None # TODO: Update when V2 added
+CROWDTANGLE_DT_CONVERSION_STR = "%Y-%m-%d %H:%M:%S"
+
 
 class PostBase:
     """
     Base class for social media post.
     Classes for specific platforms can inherit it.
     It defines the common functions that the children classes should have.
-    Should we want to update for V2, simply copy the Tweet_v1 class, create a
-    Tweet_v2 class, and then update the functions.
     """
 
     def __init__(self, post_object):
@@ -26,18 +28,6 @@ class PostBase:
         if post_object is None:
             raise ValueError("The post object cannot be None")
         self.post_object = post_object
-
-    def is_valid(self):
-        """
-        Check if the data is valid
-        """
-        raise NotImplementedError
-
-    def get_created_at_time(self):
-        """
-        Get time a post is created.
-        """
-        raise NotImplementedError
 
     def get_value(self, key_list: list = []):
         """
@@ -59,9 +49,21 @@ class PostBase:
         """
         return get_dict_val(self.post_object, key_list)
 
-    def get_rt_count(self):
+    def is_valid(self):
         """
-        Return the retweet count from this status object
+        Check if the data is valid
+        """
+        raise NotImplementedError
+
+    def get_post_time(self):
+        """
+        Get the time a post was shared.
+        """
+        raise NotImplementedError
+
+    def get_reshare_count(self):
+        """
+        Return the number of times that the post was reshared
         """
         return NotImplementedError
 
@@ -78,35 +80,15 @@ class PostBase:
         """
         raise NotImplementedError
 
-    def get_retweeted_post_ID(self):
-        """
-        Return the post ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        raise NotImplementedError
-
     def get_user_ID(self):
         """
         Return the ID of the user as a string
         """
         raise NotImplementedError
 
-    def get_retweeted_user_ID(self):
-        """
-        Return the user ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        raise NotImplementedError
-
-    def get_user_sreenname(self):
+    def get_user_handle(self):
         """
         Return the screen_name of the user (str)
-        """
-        return NotImplementedError
-
-    def get_retweeted_user_sreenname(self):
-        """
-        Return the screen_name (str) of the user in the retweeted_status
         """
         return NotImplementedError
 
@@ -117,9 +99,13 @@ class PostBase:
         return f"<{self.__class__.__name__}() object>"
 
 
+### Post base for Twitter V1 tweet object
+# Reference: https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
+############################################
 class Tweet_v1(PostBase):
     """
     Class to handle tweet object (V1 API)
+    Ref: https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/object-model/tweet
     """
 
     def __init__(self, tweet_object):
@@ -150,7 +136,7 @@ class Tweet_v1(PostBase):
                 return False
         return True
 
-    def get_created_at_time(self, timestamp=False):
+    def get_post_time(self, timestamp=False):
         """
         Return the "created_at" post time of a post.
 
@@ -167,14 +153,14 @@ class Tweet_v1(PostBase):
         if not timestamp:
             return created_at
         try:
-            dt_obj = datetime.datetime.strptime(created_at, "%a %b %d %H:%M:%S %z %Y")
+            dt_obj = datetime.datetime.strptime(created_at, TWITTER_V1_DT_CONVERSION_STR)
             return str(int(dt_obj.timestamp()))
         except:
             return None
 
-    def get_rt_count(self):
+    def get_reshare_count(self):
         """
-        Return the retweet count from this status object
+        Return the number of of times this post was reshared (i.e., the retweet count) 
         """
         return self.get_value(["retweet_count"])
 
@@ -191,16 +177,7 @@ class Tweet_v1(PostBase):
         Return the link to the tweet (str)
         so that one can click it and check the tweet in a web browser
         """
-        return f"https://twitter.com/{self.get_user_sreenname()}/status/{self.get_post_ID()}"
-
-    def get_retweeted_post_ID(self):
-        """
-        Return the post ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        if self.is_retweet:
-            return self.retweet_object.get_post_ID()
-        return None
+        return f"https://twitter.com/{self.get_user_handle()}/status/{self.get_post_ID()}"
 
     def get_user_ID(self):
         """
@@ -208,28 +185,11 @@ class Tweet_v1(PostBase):
         """
         return self.get_value(["user", "id_str"])
 
-    def get_retweeted_user_ID(self):
-        """
-        Return the user ID from the retweeted_status, if present.
-        Otherwise, return None.
-        """
-        if self.is_retweet:
-            return self.retweet_object.get_user_ID()
-        return None
-
-    def get_user_sreenname(self):
+    def get_user_handle(self):
         """
         Return the screen_name of the user (str)
         """
         return self.get_value(["user", "screen_name"])
-
-    def get_retweeted_user_sreenname(self):
-        """
-        Return the screen_name (str) of the user in the retweeted_status
-        """
-        if self.is_retweet:
-            return self.retweet_object.get_user_sreenname()
-        return None
 
     def __repr__(self):
         """
@@ -237,7 +197,124 @@ class Tweet_v1(PostBase):
         """
         return "".join(
             [
-                f"{self.__class__.__name__} object from @{self.get_user_sreenname()}\n",
+                f"{self.__class__.__name__} object from @{self.get_user_handle()}\n",
+                f"Link: {self.get_link_to_post()}",
+            ]
+        )
+
+
+### Post base for Twitter V2 tweet object
+# Reference: https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/tweet
+# TODO: Update when Decahose begins returning V2
+############################################
+class Tweet_v2(PostBase):
+    """
+    Class to handle tweet object (V2 API)
+    Ref: https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/tweet
+    """
+
+    def __init__(self, tweet_object):
+        """
+        This function initializes the instance by binding the tweet_object
+        Parameters:
+            - tweet_object (dict): the JSON object of a tweet
+        """
+        super().__init__(tweet_object)
+
+
+class FbIgPost(PostBase):
+    """
+    Class to handle CrowdTangle Facebook and Instagram post objects returned by
+    the /posts/search endpoint.
+    Endpoint Ref: https://github.com/CrowdTangle/API/wiki/Search
+    Response Ref: https://github.com/CrowdTangle/API/wiki/Search#response
+    """
+
+    def __init__(self, post_object):
+        """
+        This function initializes the instance by binding the post_object
+        Parameters:
+            - post_object (dict): the JSON object of the social media post
+        """
+        super().__init__(post_object)
+
+        if post_object is None:
+            raise ValueError("The post object cannot be None")
+        self.post_object = post_object
+
+        self.platform = self.get_value(["platform"])
+        self.is_fb_post = True if self.platform == "Facebook" else False
+        self.is_ig_post = True if self.platform == "Instagram" else False
+
+    def is_valid(self):
+        """
+        Check if the post object is valid.
+        At minimum, it should have a post "id"
+        """
+        if "id" not in self.post_object:
+            return False
+        return True
+
+    def get_post_time(self, timestamp=False):
+        """
+        Return the "date" field, indicating when a post was sent.
+
+        Parameters:
+        -----------
+        timestamp (bool): whether or not to return the "date" time as a timestamp
+
+        Returns:
+        -----------
+        - post_time (str): if timestamp=False, return "date" time as is. If
+            timestamp=True, first convert "date" time to a timestamp
+        """
+        created_at = self.get_value(["date"])
+        if not timestamp:
+            return created_at
+        try:
+            dt_obj = datetime.datetime.strptime(created_at, CROWDTANGLE_DT_CONVERSION_STR)
+            return str(int(dt_obj.timestamp()))
+        except:
+            return None
+
+    def get_reshare_count(self):
+        """
+        Return the number of times that the post was reshared
+        """
+        return self.get_value(["statistics", "actual", "shareCount"])
+
+    def get_post_ID(self):
+        """
+        Return the ID of the post as a string
+        """
+        return str(self.get_value(["id"]))
+
+    def get_link_to_post(self):
+        """
+        Return the link to the post so that one can click it and check
+        the post in a web browser
+        """
+        return self.get_value(["postUrl"])
+
+    def get_user_ID(self):
+        """
+        Return the ID of the user as a string
+        """
+        return str(self.get_value(["account", "id"]))
+
+    def get_user_handle(self):
+        """
+        Return the account handle of the user (str)
+        """
+        return self.get_value(["account", "handle"])
+
+    def __repr__(self):
+        """
+        Define the representation of the object.
+        """
+        return "".join(
+            [
+                f"{self.__class__.__name__} object from @{self.get_user_handle()}\n",
                 f"Link: {self.get_link_to_post()}",
             ]
         )
