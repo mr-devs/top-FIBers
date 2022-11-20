@@ -86,7 +86,7 @@ class PostBase:
         """
         raise NotImplementedError
 
-    def get_user_sreenname(self):
+    def get_user_handle(self):
         """
         Return the screen_name of the user (str)
         """
@@ -177,7 +177,7 @@ class Tweet_v1(PostBase):
         Return the link to the tweet (str)
         so that one can click it and check the tweet in a web browser
         """
-        return f"https://twitter.com/{self.get_user_sreenname()}/status/{self.get_post_ID()}"
+        return f"https://twitter.com/{self.get_user_handle()}/status/{self.get_post_ID()}"
 
     def get_user_ID(self):
         """
@@ -185,7 +185,7 @@ class Tweet_v1(PostBase):
         """
         return self.get_value(["user", "id_str"])
 
-    def get_user_sreenname(self):
+    def get_user_handle(self):
         """
         Return the screen_name of the user (str)
         """
@@ -197,7 +197,7 @@ class Tweet_v1(PostBase):
         """
         return "".join(
             [
-                f"{self.__class__.__name__} object from @{self.get_user_sreenname()}\n",
+                f"{self.__class__.__name__} object from @{self.get_user_handle()}\n",
                 f"Link: {self.get_link_to_post()}",
             ]
         )
@@ -279,35 +279,40 @@ class FbIgPost:
         """
         Return the number of times that the post was reshared
         """
-        return NotImplementedError
+        return self.get_value(["statistics", "actual", "shareCount"])
 
     def get_post_ID(self):
         """
         Return the ID of the post as a string
         """
-        raise NotImplementedError
+        return self.get_value(["id"])
 
     def get_link_to_post(self):
         """
         Return the link to the post so that one can click it and check
         the post in a web browser
         """
-        raise NotImplementedError
+        raise self.get_value(["postUrl"])
 
     def get_user_ID(self):
         """
         Return the ID of the user as a string
         """
-        raise NotImplementedError
+        return self.get_value(["account", "id"])
 
-    def get_user_sreenname(self):
+    def get_user_handle(self):
         """
-        Return the screen_name of the user (str)
+        Return the account handle of the user (str)
         """
-        return NotImplementedError
+        return self.get_value(["account", "handle"])
 
     def __repr__(self):
         """
         Define the representation of the object.
         """
-        return f"<{self.__class__.__name__}() object>"
+        return "".join(
+            [
+                f"{self.__class__.__name__} object from @{self.get_user_handle()}\n",
+                f"Link: {self.get_link_to_post()}",
+            ]
+        )
