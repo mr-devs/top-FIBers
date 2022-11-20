@@ -2,6 +2,8 @@
 Some simple utility functions used throughout the project.
 """
 import argparse
+import fnmatch
+import os
 
 
 def parse_cl_args(script_purpose):
@@ -38,6 +40,34 @@ def parse_cl_args(script_purpose):
     args = parser.parse_args()
 
     return args
+
+
+def retrieve_paths_from_dir(dir_path, matching_str="part*.gz"):
+    """
+    Return the full path of files in `dir_path` that match `matching_str`
+
+    Parameters:
+    -----------
+    dir_path (str) : full path to a top-level directory
+    matching_str (str) : files that match this string within `dir_path` will be
+        returned. Matching done with fnmatch.fnmatch() so wildcards are allowed.
+        Default is "part*.gz"
+
+    Returns:
+    -----------
+    data_paths (list) : a list of all full file paths to any file that matches
+        `matching_str`
+    """
+    if not isinstance(dir_path, str):
+        raise Exception(f"`dir_path` must be a string. You passed a {type(dir_path)}")
+
+    data_paths = []
+    for root, _, files in os.walk(dir_path):
+        for filename in files:
+            if fnmatch.fnmatch(filename, matching_str):
+                data_paths.append(os.path.join(root, filename))
+
+    return data_paths
 
 
 def get_dict_val(dictionary: dict, key_list: list = []):

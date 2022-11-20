@@ -17,11 +17,11 @@ Output:
     1. {YYYY_mm_dd}__fib_indices_twitter.parquet: a pandas dataframe with the following columns:
         - user_id (str) : a unique Twitter user ID
         - fib_index (int) : a specific user's FIB index
-        - total_retweets (int) : a specific user's FIB index
-    2. {YYYY_mm_dd}__hitlist_posts_twitter.parquet: a pandas dataframe with the following columns:
+        - total_reshares (int) : total number of reshares earned by user_id
+    2. {YYYY_mm_dd}__top_spreader_posts_twitter.parquet: a pandas dataframe with the following columns:
         - user_id (str) : a unique Twitter user ID
-        - tweet_id (str) : a unique Twitter post ID
-        - num_rts (int) : the number of retweets tweet_id earned
+        - post_id (str) : a unique Twitter post ID
+        - num_reshares (int) : the number of times post_id was reshared
         - timestamp (str) : timestamp when post was sent
 
     NOTE: YYYY_mm_dd will be representative of the machine's current date
@@ -38,12 +38,15 @@ import gzip
 import json
 import os
 
-import pandas as pd
-
-from collections import defaultdict, Counter
+from collections import defaultdict
 from top_fibers_pkg.data_model import Tweet_v1
-from top_fibers_pkg import (
-    calc_fib_index, create_fib_frame, parse_cl_args, retrieve_paths_from_dir
+from top_fibers_pkg.utils import parse_cl_args, retrieve_paths_from_dir
+from top_fibers_pkg.fib_helpers import (
+    create_userid_total_reshares,
+    create_userid_reshare_lists,
+    create_fib_frame,
+    get_top_spreaders,
+    create_top_spreader_df,
 )
 
 SCRIPT_PURPOSE = (
@@ -52,11 +55,13 @@ SCRIPT_PURPOSE = (
 )
 MATCHING_STR = "part*.gz"
 
-# NOTE: Take the top 50 FIBers AND top 50 most retweeted users (so we'll get more than 50 accounts)
-NUM_TOP_USERS = 50
+# NOTE: Set the number of top ranked spreaders to select and which type
+NUM_SPREADERS = 50
+SPREADER_TYPE = "fib_index"  # Options: ["total_reshares", "fib_index"]
+
 
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def load_tweets(data_files):
+def extract_data_from_files(data_files):
     """
     Load tweet data into three dictionaries that include only the
     needed information: user IDs/screennames and retweet counts
@@ -159,48 +164,14 @@ def load_tweets(data_files):
         print(f"Total Tweets Ingested = {num_tweets}")
         print(f"Total Number of Users = {num_users}")
 
-        return dict(tweetid_max_rts), dict(userid_tweetids), userid_username, tweetid_timestamp
+        return (
+            dict(tweetid_max_rts),
+            dict(userid_tweetids),
+            userid_username,
+            tweetid_timestamp,
+        )
 
     # Raise this error if something weird happens loading the data
-    except Exception as e:
-        raise Exception(e)
-
-
-def create_userid_rt_counts(tweetid_max_rts, userid_tweetids):
-    """
-    Create a dictionary that takes the following form:
-    - keys = user id strings
-    - values = list of max retweets earned in our data for any tweet sent by them
-
-    Parameters:
-    -----------
-    - tweetid_max_rts (dict) : {tweet_id_str : max number of retweets in data}
-    - userid_tweetids (dict) : {userid_x : set([tweetids sent by userid_x])}
-
-    Returns:
-    -----------
-    - userid_rt_count_lists (dict) : {userid_x : list([rt count (int) for each tweetid sent by userid_x])}
-    - userid_rt_counts (dict) : {userid_x : total rts earned by userid_x}
-
-    Exceptions:
-    -----------
-    - Exception, TypeError
-    """
-    if not isinstance(tweetid_max_rts, dict):
-        raise TypeError("`tweetid_max_rts` must be a dict!")
-    if not isinstance(userid_tweetids, dict):
-        raise TypeError("`userid_tweetids` must be a dict!")
-
-    try:
-        userid_rt_count_lists = defaultdict(list)
-        userid_rt_counts = Counter()
-        for userid, tweetids in userid_tweetids.items():
-            for tweetid in tweetids:
-                num_rts = tweetid_max_rts[tweetid]
-                userid_rt_count_lists[userid].append(num_rts)
-                userid_rt_counts[userid] += num_rts
-        return userid_rt_count_lists, dict(userid_rt_counts)
-
     except Exception as e:
         raise Exception(e)
 
@@ -216,56 +187,57 @@ if __name__ == "__main__":
         output_dir = "."
 
     # Retrieve all paths to data files
+    print("Data will be extracted from here:")
     data_files = []
     for data_dir in data_dirs:
+        print(f"\t- {data_dir}")
         lst_data_files = retrieve_paths_from_dir(data_dir, matching_str=MATCHING_STR)
         data_files.extend(lst_data_files)
-    
-    print("Data files that will be processed:")
-    for f in data_files:
-        print(f"\t- {f}")
+    num_files = len(data_files)
+    print(f"\nNum. files to process: {num_files}\n")
 
     # Wrangle data and calculate FIB indices
-    tweetid_max_rts, userid_tweetids, userid_username, tweetid_timestamp = load_tweets(data_files)
-    userid_rt_count_lists, userid_rt_counts = create_userid_rt_counts(
-        tweetid_max_rts, userid_tweetids
-    )
-    fib_frame = create_fib_frame(userid_rt_count_lists, userid_username)
-    userid_rt_counts_frame = pd.DataFrame.from_records(
-        list(userid_rt_counts.items()), columns=["user_id", "total_retweets"]
-    )
-    userid_rt_counts_frame.sort_values(
-        by="total_retweets", ascending=False, inplace=True
-    )
-    fib_frame = fib_frame.merge(userid_rt_counts_frame, on="user_id")
-    
-    # Get top 50 users with most total retweets
-    fib_frame.sort_values(by="total_retweets", ascending=False, inplace=True)
-    top_50_rts = list(fib_frame["user_id"].head(NUM_TOP_USERS))
+    (
+        postid_num_reshares,
+        userid_postids,
+        userid_username,
+        postid_timestamp,
+    ) = extract_data_from_files(data_files)
 
-    # Get top 50 users with the highest FIB indices
-    fib_frame.sort_values(by="fib_index", ascending=False, inplace=True)
-    top_50_fibers = list(fib_frame["user_id"].head(NUM_TOP_USERS))
+    print("Creating output dataframes...")
+    userid_total_reshares = create_userid_total_reshares(
+        postid_num_reshares, userid_postids
+    )
+    userid_reshare_lists = create_userid_reshare_lists(
+        postid_num_reshares, userid_postids
+    )
+    fib_frame = create_fib_frame(
+        userid_reshare_lists, userid_username, userid_total_reshares
+    )
 
-    # Combine them into one set and create records for each tweet
-    hitlist = set(top_50_fibers + top_50_rts)
-    hitlist_records = []
-    for user_id in hitlist:
-        user_tweetids = userid_tweetids[user_id]
-        for tid in user_tweetids:
-            hitlist_records.append({
-                "user_id" : user_id,
-                "tweet_id" : tid,
-                "num_rts" : tweetid_max_rts[tid],
-                "timestamp" : tweetid_timestamp[tid],
-            })
-    hitlist_df = pd.DataFrame.from_records(hitlist_records)
+    print("Top spreader information:")
+    print(f"\t- Num. spreaders to select   : {NUM_SPREADERS}")
+    print(f"\t- Type of spreaders to select: {SPREADER_TYPE}")
+    top_spreaders = get_top_spreaders(fib_frame, NUM_SPREADERS, SPREADER_TYPE)
+    top_spreader_df = create_top_spreader_df(
+        top_spreaders, userid_postids, postid_num_reshares, postid_timestamp
+    )
+
+    fib_frame = fib_frame.sort_values("fib_index", ascending=False).reset_index(
+        drop=True
+    )
+    top_spreader_df = top_spreader_df.sort_values(
+        "num_reshares", ascending=False
+    ).reset_index(drop=True)
 
     # Save files
+    print("Saving data...")
     today = datetime.datetime.now().strftime("%Y_%m_%d")
     output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices_twitter.parquet")
-    output_rt_fname = os.path.join(output_dir, f"{today}__hitlist_posts_twitter.parquet")
+    output_rt_fname = os.path.join(
+        output_dir, f"{today}__top_spreader_posts_twitter.parquet"
+    )
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
-    hitlist_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
+    top_spreader_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
 
     print("Script Complete.")
