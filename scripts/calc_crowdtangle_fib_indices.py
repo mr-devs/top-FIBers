@@ -42,7 +42,7 @@ import os
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import FbIgPost
-from top_fibers_pkg.utils import parse_cl_args, retrieve_paths_from_dir
+from top_fibers_pkg.utils import parse_cl_args_fib, retrieve_paths_from_dir
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
     create_userid_reshare_lists,
@@ -55,7 +55,7 @@ SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
     "as well as the posts sent by the worst misinformation spreaders."
 )
-MATCHING_STR = "*__posts_FB_IG.json.gz"
+MATCHING_STR = "*__fb_posts_w_links.jsonl.gzip"
 
 # NOTE: Set the number of top ranked spreaders to select and which type
 NUM_SPREADERS = 50
@@ -135,7 +135,7 @@ def extract_data_from_files(data_files):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
     # Parse input flags
-    args = parse_cl_args(SCRIPT_PURPOSE)
+    args = parse_cl_args_fib(SCRIPT_PURPOSE)
     data_dirs = args.data
     output_dir = args.out_dir
     if output_dir is None:

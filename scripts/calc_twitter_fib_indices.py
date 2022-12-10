@@ -40,7 +40,7 @@ import os
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import Tweet_v1
-from top_fibers_pkg.utils import parse_cl_args, retrieve_paths_from_dir
+from top_fibers_pkg.utils import parse_cl_args_fib, retrieve_paths_from_dir
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
     create_userid_reshare_lists,
@@ -180,7 +180,7 @@ def extract_data_from_files(data_files):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
     # Parse input flags
-    args = parse_cl_args(SCRIPT_PURPOSE)
+    args = parse_cl_args_fib(SCRIPT_PURPOSE)
     data_dirs = args.data
     output_dir = args.out_dir
     if output_dir is None:
