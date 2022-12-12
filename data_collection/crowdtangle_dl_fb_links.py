@@ -3,7 +3,10 @@ Purpose:
     Download Facebook posts from CrowdTangle based on a list of links.
     NOTE:
         - Requires a CrowdTangle API token
-        - 
+        - The data pulled is dictated by the constant variables at the top of the script.
+        Particularly important are:
+            - NUMBER_OF_MONTHS_TO_PULL
+            - OFFSET
 
 Inputs:
     Required:
