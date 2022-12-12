@@ -3,19 +3,14 @@ Purpose:
     Download Facebook posts from CrowdTangle based on a list of links.
     NOTE:
         - Requires a CrowdTangle API token
+        - 
 
 Inputs:
-    Required: -c: config.ini file
-    Optional:
-        -s / --start_date (YYYY-MM-DD)
-        -e / --end_date (YYYY-MM-DD) — Not inclusive!
-    NOTE:
-        - If neither `start_date` is nor `end_date` are included, we pull data for the
-            previous UTC day
-        - If `end_date` is included, `start_date` must also be included
-        - If `start_date` is included but no `end_date` is included, the current UTC
-            date is utilized as the `end_date` (i.e., all data from `start_date` up to
-            but not including today (UTC) is gathered)
+    Required:
+        -d / --domains-file: Full path to a file with one domain on each line.
+            Posts will be downloaded that include at least one of these domains
+        -o / --out-dir: Directory where you'd like to save the output data
+
 Outputs:
     One new-line delimited json.gz file with all posts from FB for the specified period.
     Output file name form:
@@ -56,7 +51,7 @@ OFFSET = -1
 # Number of seconds to wait before every query, regardless of success or error
 WAIT_BTWN_POSTS = 8
 
-# Base number of seconds to wait after encountering an error, raised to the number of retry counts
+# Base number of seconds to wait after encountering an error, raised to the number of try counts
 WAIT_BTWN_ERROR_BASE = 2
 
 
@@ -245,8 +240,8 @@ if __name__ == "__main__":
 
             total_posts = 0
             query_count = 0
-            retry_count = 0
-            max_retries = 10
+            try_count = 0
+            max_attempts = 7
 
             first_call = True
             more_data = False
@@ -311,12 +306,13 @@ if __name__ == "__main__":
                         pass
 
                     # Handle the retries...
-                    print(f"There are {max_retries-retry_count} retries left.")
-                    retry_count += 1
-                    if (max_retries - retry_count) <= 0:
+                    try_count += 1
+                    print(f"There are {max_attempts-try_count} tries left.")
+                    if (max_attempts - try_count) <= 0:
+                        print("Breaking out of loop!")
                         break
                     else:
-                        wait_time = WAIT_BTWN_ERROR_BASE**retry_count
+                        wait_time = WAIT_BTWN_ERROR_BASE**try_count
                         if wait_time > 60:
                             wait_time = wait_time / 60
                             print(f"Waiting {wait_time} minutes...")
@@ -329,13 +325,14 @@ if __name__ == "__main__":
                 else:
                     if num_posts == 0:
                         print("Zero posts were returned.")
-                        print(f"There are {max_retries-retry_count} retries left.")
-                        retry_count += 1
+                        try_count += 1
+                        print(f"There are {max_attempts-try_count} retries left.")
 
-                        if (max_retries - retry_count) <= 0:
+                        if (max_attempts - try_count) <= 0:
+                            print("Breaking out of loop!")
                             break
                         else:
-                            wait_time = WAIT_BTWN_ERROR_BASE**retry_count
+                            wait_time = WAIT_BTWN_ERROR_BASE**try_count
                             if wait_time > 60:
                                 wait_time = wait_time / 60
                                 print(f"Waiting {wait_time} minutes...")
@@ -346,8 +343,8 @@ if __name__ == "__main__":
                             continue
 
                     else:
-                        # Reset the retry count to zero
-                        retry_count = 0
+                        # Reset the try count to zero
+                        try_count = 0
 
                         most_recent_date_str = posts[0]["date"]
                         oldest_date_str = posts[-1]["date"]

@@ -66,7 +66,7 @@ def parse_cl_args_fib(script_purpose=""):
 def parse_cl_args_ct_dl(script_purpose=""):
     """
     Read command line arguments for the script that downloads Facebook posts from
-        CrowdTangle.
+    CrowdTangle.
         - top-fibers/data_collection/crowdtangle_dl_fb_links.py
 
     Parameters:
