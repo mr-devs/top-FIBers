@@ -69,6 +69,7 @@ if __name__ == "__main__":
     # Load domains to match in below query and clean up
     domains = load_lines(domains_filepath)
     domains = [domain.replace("https://", "") for domain in domains]
+    domains = [domain.replace("http://", "") for domain in domains]
     domains = [domain.replace("www.", "") for domain in domains]
     domains = [domain.rstrip("/*") for domain in domains]
 
@@ -110,6 +111,9 @@ if __name__ == "__main__":
             try_count = 0
             query_count = 0
             max_attempts = 3
+
+            start = start_date
+            end = end_date
             while True:
                 try:
                     # count = 10000 only if you request it, otherwise it's 100
@@ -118,8 +122,8 @@ if __name__ == "__main__":
                     time.sleep(WAIT_BTWN_POSTS)
                     response = ct_get_search_posts(
                         count=NUMBER_OF_POSTS_PER_CALL,
-                        start_time=start_date,
-                        end_time=end_date,
+                        start_time=start,
+                        end_time=end,
                         include_history=None,
                         sort_by="date",
                         types=None,
@@ -233,6 +237,7 @@ if __name__ == "__main__":
                         break
 
                     # If all conditionals are passed, we update the date string for query
-                    end_date = oldest_date_dt.strftime("%Y-%m-%dT%H:%M:%S")
-                    print(f"\t|--> New end date: {end_date}")
+                    end = oldest_date_dt.strftime("%Y-%m-%dT%H:%M:%S")
+                    print(f"\t|--> New end date: {end}")
                     print(f"\t|--> {'-'*50}")
+    print("~~~ Script complete! ~~~")
