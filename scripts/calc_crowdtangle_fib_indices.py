@@ -36,13 +36,14 @@ Author: Matthew DeVerna
 """
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Load Packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import datetime
+import glob
 import gzip
 import json
 import os
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import FbIgPost
-from top_fibers_pkg.dates import retrieve_paths_from_dir, get_earliest_date
+from top_fibers_pkg.dates import get_earliest_date
 from top_fibers_pkg.utils import parse_cl_args_fib
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
@@ -56,7 +57,7 @@ SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
     "as well as the posts sent by the worst misinformation spreaders."
 )
-MATCHING_STR = "*__fb_posts_w_links.jsonl.gzip"
+MATCHING_STR = "*.jsonl.gzip"
 
 # NOTE: Set the number of top ranked spreaders to select and which type
 NUM_SPREADERS = 50
@@ -128,8 +129,8 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
         num_posts = len(postid_num_reshares.keys())
         num_users = len(userid_username.keys())
-        print(f"Total Posts Ingested = {num_posts}")
-        print(f"Total Number of Users = {num_users}")
+        print(f"Total Posts Ingested = {num_posts:,}")
+        print(f"Total Number of Users = {num_users:,}")
 
         return (
             userid_username,
@@ -147,7 +148,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 if __name__ == "__main__":
     # Parse input flags
     args = parse_cl_args_fib(SCRIPT_PURPOSE)
-    data_dirs = args.data
+    data_dir = args.data
     output_dir = args.out_dir
     month_calculated = args.month_calculated
     if output_dir is None:
@@ -155,11 +156,9 @@ if __name__ == "__main__":
 
     # Retrieve all paths to data files
     print("Data will be extracted from here:")
-    data_files = []
-    for data_dir in data_dirs:
-        print(f"\t- {data_dir}")
-        lst_data_files = retrieve_paths_from_dir(data_dir, matching_str=MATCHING_STR)
-        data_files.extend(lst_data_files)
+    print(f"\t- {data_dir}")
+    data_files = sorted(glob.glob(os.path.join(data_dir, MATCHING_STR)))
+
     num_files = len(data_files)
     print(f"\nNum. files to process: {num_files}\n")
 
@@ -202,12 +201,15 @@ if __name__ == "__main__":
 
     # Save files
     print("Saving data...")
+    outdir_with_month = os.path.join(output_dir, month_calculated)
+    if not os.path.exists(outdir_with_month):
+        os.makedirs(outdir_with_month)
     today = datetime.datetime.now().strftime("%Y_%m_%d")
     output_fib_fname = os.path.join(
-        output_dir, f"{today}__fib_indices_crowdtangle.parquet"
+        outdir_with_month, f"{today}__fib_indices_crowdtangle.parquet"
     )
     output_rt_fname = os.path.join(
-        output_dir, f"{today}__top_spreader_posts_crowdtangle.parquet"
+        outdir_with_month, f"{today}__top_spreader_posts_crowdtangle.parquet"
     )
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
     top_spreader_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
