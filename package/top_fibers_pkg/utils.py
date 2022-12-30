@@ -2,9 +2,12 @@
 Some simple utility functions used throughout the project.
 """
 import argparse
+import logging
+import os
+import sys
 
 
-def parse_cl_args_symlinks(script_purpose=""):
+def parse_cl_args_symlinks(script_purpose="", logger=None):
     """
     Read command line arguments for the symlink creation script.
         - top-fibers/scripts/create_data_file_symlinks.py
@@ -14,6 +17,7 @@ def parse_cl_args_symlinks(script_purpose=""):
     - script_purpose (str) : Purpose of the script being utilized. When printing
         script help message via `python script.py -h`, this will represent the
         script's description. Default = "" (an empty string)
+    - logger : logging object
 
     Returns
     --------------
@@ -23,7 +27,7 @@ def parse_cl_args_symlinks(script_purpose=""):
     --------------
     None
     """
-    print("Parsing command line arguments...")
+    logger.info("Parsing command line arguments...")
 
     # Initiate the parser
     parser = argparse.ArgumentParser(description=script_purpose)
@@ -70,7 +74,7 @@ def parse_cl_args_symlinks(script_purpose=""):
     return args
 
 
-def parse_cl_args_fib(script_purpose=""):
+def parse_cl_args_fib(script_purpose="", logger=None):
     """
     Read command line arguments for the following scripts.
         - top-fibers/scripts/calc_crowdtangle_fib_indices.py
@@ -81,6 +85,7 @@ def parse_cl_args_fib(script_purpose=""):
     - script_purpose (str) : Purpose of the script being utilized. When printing
         script help message via `python script.py -h`, this will represent the
         script's description. Default = "" (an empty string)
+    - logger : logging object
 
     Returns
     --------------
@@ -90,7 +95,7 @@ def parse_cl_args_fib(script_purpose=""):
     --------------
     None
     """
-    print("Parsing command line arguments...")
+    logger.info("Parsing command line arguments...")
 
     # Initiate the parser
     parser = argparse.ArgumentParser(description=script_purpose)
@@ -131,7 +136,7 @@ def parse_cl_args_fib(script_purpose=""):
     return args
 
 
-def parse_cl_args_ct_dl(script_purpose=""):
+def parse_cl_args_ct_dl(script_purpose="", logger=None):
     """
     Read command line arguments for the script that downloads Facebook posts from
     CrowdTangle.
@@ -142,6 +147,7 @@ def parse_cl_args_ct_dl(script_purpose=""):
     - script_purpose (str) : Purpose of the script being utilized. When printing
         script help message via `python script.py -h`, this will represent the
         script's description. Default = "" (an empty string)
+    - logger : logging object
 
     Returns
     --------------
@@ -151,7 +157,7 @@ def parse_cl_args_ct_dl(script_purpose=""):
     --------------
     None
     """
-    print("Parsing command line arguments...")
+    logger.info("Parsing command line arguments...")
 
     # Initiate the parser
     parser = argparse.ArgumentParser(description=script_purpose)
@@ -219,3 +225,39 @@ def load_lines(file_path):
 
     with open(file_path, "r") as f:
         return [line.rstrip() for line in f]
+
+
+def get_logger(log_dir, log_fname, also_print=False):
+    """Create logger."""
+
+    # Create log_dir if it doesn't exist already
+    try:
+        os.makedirs(f"{log_dir}")
+    except:
+        pass
+
+    # Create logger and set level
+    logger = logging.getLogger(__name__)
+    logger.setLevel(level=logging.INFO)
+
+    # Configure file handler
+    formatter = logging.Formatter(
+        fmt="%(asctime)s-%(name)s-%(levelname)s-%(message)s",
+        datefmt="%Y-%m-%d_%H:%M:%S",
+    )
+    full_log_path = os.path.join(log_dir, log_fname)
+    fh = logging.FileHandler(f"{full_log_path}")
+    fh.setFormatter(formatter)
+    fh.setLevel(level=logging.INFO)
+    # Add handlers to logger
+    logger.addHandler(fh)
+
+    # If also_print is true, the logger will also print the output to the
+    # console in addition to sending it to the log file
+    if also_print:
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setFormatter(formatter)
+        ch.setLevel(level=logging.INFO)
+        logger.addHandler(ch)
+
+    return logger

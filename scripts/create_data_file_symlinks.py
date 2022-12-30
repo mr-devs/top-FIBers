@@ -18,8 +18,12 @@ import datetime
 import glob
 import os
 
-from top_fibers_pkg.utils import parse_cl_args_symlinks
+from top_fibers_pkg.utils import parse_cl_args_symlinks, get_logger
 from top_fibers_pkg.dates import get_earliest_date
+
+SCRIPT_PURPOSE = "Create symbolic links for the period specified"
+LOG_DIR = "/data_volume/top-fibers/logs"
+LOG_FNAME = "data_file_symlinks.log"
 
 
 def get_symlink_tuples(files, start, end, output_dir_w_month):
@@ -52,17 +56,19 @@ def create_sym_links(file_tuples):
         )
 
     for source, new_location in file_tuples:
-        print(
-            "Creating following symlink:\n"
-            f"\tSource      : {source}\n"
-            f"\tNew Location: {new_location}\n"
-        )
+        logger.info("Creating following symlink:")
+        logger.info(f"\tSource      : {source}")
+        logger.info(f"\tNew Location: {new_location}")
         os.symlink(source, new_location)
-    print("All symbolic links created.")
+    logger.info("All symbolic links created.")
 
 
 if __name__ == "__main__":
-    args = parse_cl_args_symlinks()
+    logger = get_logger(LOG_DIR, LOG_FNAME)
+    logger.info("-" * 50)
+    logger.info(f"Begin script: {__file__}")
+
+    args = parse_cl_args_symlinks(SCRIPT_PURPOSE, logger)
     data_path = args.data
     output_dir = args.out_dir
     month_calculated = args.month_calculated
@@ -73,8 +79,8 @@ if __name__ == "__main__":
         months_earlier=num_months, as_timestamp=False, month_calculated=month_calculated
     )
     end = datetime.datetime.strptime(month_calculated, "%Y_%m")
-    print("start", start)
-    print("end", end)
+    logger.info(f"Start date: {start}")
+    logger.info(f"End date: {end}")
 
     # Create output dir if it doesn't exist
     output_dir_w_month = os.path.join(output_dir, month_calculated)
