@@ -149,7 +149,7 @@ if __name__ == "__main__":
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
     logger.info("-" * 50)
-    logger.info(f"Begin script: {script_name}")
+    logger.info(f"Begin script: {__file__}")
 
     # Parse input flags
     args = parse_cl_args_fib(SCRIPT_PURPOSE, logger)
