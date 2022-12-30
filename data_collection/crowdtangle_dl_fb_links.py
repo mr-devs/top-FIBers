@@ -33,18 +33,13 @@ import time
 
 from top_fibers_pkg.dates import get_start_and_end_dates
 from top_fibers_pkg.crowdtangle_helpers import ct_get_search_posts
-from top_fibers_pkg.utils import parse_cl_args_ct_dl, load_lines
+from top_fibers_pkg.utils import parse_cl_args_ct_dl, load_lines, get_logger
 
 SCRIPT_PURPOSE = "Download Facebook posts from CrowdTangle based on a list of links."
+LOG_DIR = "/data_volume/top-fibers/logs"
+LOG_FNAME = "top_fibers_fb_link_dl.log"
 
-LOG_FILE_NAME = "top_fibers_fb_link_dl.log"
-# NUMBER_OF_MONTHS_TO_PULL = 1
 NUMBER_OF_POSTS_PER_CALL = 10_000
-
-# Sets the end date. Must be <= 0.
-# If OFFSET = 0, end_date is last day of current month
-# If OFFSET = -1, end_date is last day of previous month
-# OFFSET = -1
 
 # Number of seconds to wait before every query, regardless of success or error
 WAIT_BTWN_POSTS = 8
@@ -54,16 +49,21 @@ WAIT_BTWN_ERROR_BASE = 2
 
 
 if __name__ == "__main__":
-    args = parse_cl_args_ct_dl()
+    script_name = os.path.basename(__file__)
+    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
+    logger.info("-" * 50)
+    logger.info(f"Begin script: {__file__}")
+
+    args = parse_cl_args_ct_dl(SCRIPT_PURPOSE, logger)
     domains_dir = args.domains_dir  # Includes one domain on each line
     output_dir = args.out_dir
     last_month = args.last_month
     num_months = int(args.num_months)
 
-    print(f"Domains dir: {domains_dir}")
+    logger.info(f"Domains dir: {domains_dir}")
     all_domains_files = sorted(glob.glob(os.path.join(domains_dir, "*iffy_list.txt")))
     latest_domains_filepath = all_domains_files[-1]
-    print(f"Domains file: {latest_domains_filepath}")
+    logger.info(f"Domains file: {latest_domains_filepath}")
 
     # Load domains to match in below query and clean up
     domains = load_lines(latest_domains_filepath)
@@ -90,8 +90,8 @@ if __name__ == "__main__":
             f"\t current_time : {current_time}\n"
         )
 
-    print(f"Start date  : {start_date}")
-    print(f"End date    : {end_date}")
+    logger.info(f"Start date  : {start_date}")
+    logger.info(f"End date    : {end_date}")
 
     # Create output filename with time period
     start_str = start_date.strftime("%Y-%m-%d")
@@ -100,14 +100,16 @@ if __name__ == "__main__":
         output_dir, f"{start_str}--{end_str}__fb_posts_w_links.jsonl.gzip"
     )
 
-    print(f"Output file : {output_file_path}")
+    logger.info(f"Output file : {output_file_path}")
 
     # Open file here so we don't have to hold data in memory
     with gzip.open(output_file_path, "wb") as f:
 
         # Iterate through each site
         for idx, domain in enumerate(domains, start=1):
-            print(f"Collect posts matching domain {idx} of {len(domains)}: {domain}")
+            logger.info(
+                f"Collect posts matching domain {idx} of {len(domains)}: {domain}"
+            )
 
             total_posts = 0
             try_count = 0
@@ -147,47 +149,47 @@ if __name__ == "__main__":
                     num_posts = len(posts)
 
                 except Exception as e:  # 6 calls/minute limit if you request them
-                    print(e)
+                    logger.exception(e)
                     try:
-                        print(f"FB message: {response_json['message']}")
+                        logger.info(f"FB message: {response_json['message']}")
                     except:
                         pass
 
                     # Handle the retries...
                     try_count += 1
-                    print(f"There are {max_attempts-try_count} tries left.")
+                    logger.info(f"There are {max_attempts-try_count} tries left.")
                     if (max_attempts - try_count) <= 0:
-                        print("Breaking out of loop!")
+                        logger.info("Breaking out of loop!")
                         break
                     else:
                         wait_time = WAIT_BTWN_ERROR_BASE**try_count
                         if wait_time > 60:
                             wait_time = wait_time / 60
-                            print(f"Waiting {wait_time} minutes...")
+                            logger.info(f"Waiting {wait_time} minutes...")
                         else:
-                            print(f"Waiting {wait_time} seconds...")
+                            logger.info(f"Waiting {wait_time} seconds...")
                         time.sleep(wait_time)
-                        print(f"Retrying...")
+                        logger.info(f"Retrying...")
                         continue
 
                 else:
                     if num_posts == 0:
-                        print("Zero posts were returned.")
+                        logger.info("Zero posts were returned.")
                         try_count += 1
-                        print(f"There are {max_attempts-try_count} retries left.")
+                        logger.info(f"There are {max_attempts-try_count} retries left.")
 
                         if (max_attempts - try_count) <= 0:
-                            print("Breaking out of loop!")
+                            logger.info("Breaking out of loop!")
                             break
                         else:
                             wait_time = WAIT_BTWN_ERROR_BASE**try_count
                             if wait_time > 60:
                                 wait_time = wait_time / 60
-                                print(f"Waiting {wait_time} minutes...")
+                                logger.info(f"Waiting {wait_time} minutes...")
                             else:
-                                print(f"Waiting {wait_time} seconds...")
+                                logger.info(f"Waiting {wait_time} seconds...")
                             time.sleep(wait_time)
-                            print(f"Retrying...")
+                            logger.info(f"Retrying...")
                             continue
 
                     else:
@@ -196,7 +198,7 @@ if __name__ == "__main__":
 
                         most_recent_date_str = posts[0]["date"]
                         oldest_date_str = posts[-1]["date"]
-                        print(
+                        logger.info(
                             f"\t|--> {oldest_date_str} - {most_recent_date_str}"
                             f": {num_posts:,} posts."
                         )
@@ -209,7 +211,7 @@ if __name__ == "__main__":
                             f.write(post_in_bytes)
 
                         total_posts += num_posts
-                        print(f"Total posts collected: {total_posts:,}")
+                        logger.info(f"Total posts collected: {total_posts:,}")
 
                         # Update the time period we're searching.
                         # ---------------------------------------
@@ -230,7 +232,7 @@ if __name__ == "__main__":
                     if oldest_date_dt <= datetime.datetime.combine(
                         start_date, empty_time
                     ):
-                        print(f"\t|--> end <= start so we have all data.")
+                        logger.info(f"\t|--> end <= start so we have all data.")
                         break
 
                     # More than 500 queries (~5M posts), we break the script.
@@ -240,6 +242,6 @@ if __name__ == "__main__":
 
                     # If all conditionals are passed, we update the date string for query
                     end = oldest_date_dt.strftime("%Y-%m-%dT%H:%M:%S")
-                    print(f"\t|--> New end date: {end}")
-                    print(f"\t|--> {'-'*50}")
-    print("~~~ Script complete! ~~~")
+                    logger.info(f"\t|--> New end date: {end}")
+                    logger.info(f"\t|--> {'-'*50}")
+    logger.info("~~~ Script complete! ~~~")
