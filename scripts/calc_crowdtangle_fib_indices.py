@@ -42,7 +42,8 @@ import os
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import FbIgPost
-from top_fibers_pkg.utils import parse_cl_args_fib, retrieve_paths_from_dir
+from top_fibers_pkg.dates import retrieve_paths_from_dir, get_earliest_date
+from top_fibers_pkg.utils import parse_cl_args_fib
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
     create_userid_reshare_lists,
@@ -61,15 +62,19 @@ MATCHING_STR = "*__fb_posts_w_links.jsonl.gzip"
 NUM_SPREADERS = 50
 SPREADER_TYPE = "fib_index"  # Options: ["total_reshares", "fib_index"]
 
+# Set the number of months to calculate the FIB index from
+NUM_MONTHS = 3
 
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def extract_data_from_files(data_files):
+def extract_data_from_files(data_files, earliest_date_tstamp):
     """
     Extract necessary data from the list of input files.
 
     Parameters:
     -----------
     - data_files (list) : list of full paths to data files to parse
+    - earliest_date_tstamp (timestamp) : the earliest date from which to consider
+        data for calculating FIB indices
 
     Returns:
     -----------
@@ -103,7 +108,13 @@ def extract_data_from_files(data_files):
                         continue
 
                     post_id = post_obj.get_post_ID()
-                    timestamp = post_obj.get_post_time(timestamp=True)
+                    timestamp_str = post_obj.get_post_time(timestamp=True)
+                    timestamp = datetime.datetime.fromtimestamp(
+                        int(timestamp_str)
+                    ).timestamp()
+                    # Skip anything posted before the earliest date
+                    if timestamp < earliest_date_tstamp:
+                        continue
                     user_id = post_obj.get_user_ID()
                     username = post_obj.get_user_handle()
                     reshare_count = post_obj.get_reshare_count()
@@ -111,7 +122,7 @@ def extract_data_from_files(data_files):
                         reshare_count = 0
 
                     postid_num_reshares[post_id] = reshare_count
-                    postid_timestamp[post_id] = timestamp
+                    postid_timestamp[post_id] = timestamp_str
                     userid_username[user_id] = username
                     userid_postids[user_id].add(post_id)
 
@@ -138,6 +149,7 @@ if __name__ == "__main__":
     args = parse_cl_args_fib(SCRIPT_PURPOSE)
     data_dirs = args.data
     output_dir = args.out_dir
+    month_calculated = args.month_calculated
     if output_dir is None:
         output_dir = "."
 
@@ -151,12 +163,16 @@ if __name__ == "__main__":
     num_files = len(data_files)
     print(f"\nNum. files to process: {num_files}\n")
 
+    # Get the first date of
+    earliest_date_tstamp = get_earliest_date(
+        months_earlier=NUM_MONTHS, as_timestamp=True, month_calculated=month_calculated
+    )
     (
         userid_username,
         userid_postids,
         postid_timestamp,
         postid_num_reshares,
-    ) = extract_data_from_files(data_files)
+    ) = extract_data_from_files(data_files, earliest_date_tstamp)
 
     print("Creating output dataframes...")
     userid_total_reshares = create_userid_total_reshares(

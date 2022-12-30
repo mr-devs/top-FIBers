@@ -40,7 +40,8 @@ import os
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import Tweet_v1
-from top_fibers_pkg.utils import parse_cl_args_fib, retrieve_paths_from_dir
+from top_fibers_pkg.dates import retrieve_paths_from_dir
+from top_fibers_pkg.utils import parse_cl_args_fib
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
     create_userid_reshare_lists,
