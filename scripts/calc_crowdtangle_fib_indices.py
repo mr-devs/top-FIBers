@@ -151,6 +151,7 @@ if __name__ == "__main__":
     data_dir = args.data
     output_dir = args.out_dir
     month_calculated = args.month_calculated
+    num_months = int(args.num_months)
     if output_dir is None:
         output_dir = "."
 
@@ -164,8 +165,10 @@ if __name__ == "__main__":
 
     # Get the first date of
     earliest_date_tstamp = get_earliest_date(
-        months_earlier=NUM_MONTHS, as_timestamp=True, month_calculated=month_calculated
+        months_earlier=num_months, as_timestamp=True, month_calculated=month_calculated
     )
+
+    # Wrangle data and calculate FIB indices
     (
         userid_username,
         userid_postids,

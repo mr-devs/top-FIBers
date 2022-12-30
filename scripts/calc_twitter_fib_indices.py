@@ -34,13 +34,14 @@ Author: Matthew DeVerna
 """
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Load Packages ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 import datetime
+import glob
 import gzip
 import json
 import os
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import Tweet_v1
-from top_fibers_pkg.dates import retrieve_paths_from_dir
+from top_fibers_pkg.dates import get_earliest_date
 from top_fibers_pkg.utils import parse_cl_args_fib
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
@@ -50,11 +51,12 @@ from top_fibers_pkg.fib_helpers import (
     create_top_spreader_df,
 )
 
+
 SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
     "as well as the posts sent by the worst misinformation spreaders."
 )
-MATCHING_STR = "part*.gz"
+MATCHING_STR = "*.jsonl.gzip"
 
 # NOTE: Set the number of top ranked spreaders to select and which type
 NUM_SPREADERS = 50
@@ -62,7 +64,7 @@ SPREADER_TYPE = "fib_index"  # Options: ["total_reshares", "fib_index"]
 
 
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def extract_data_from_files(data_files):
+def extract_data_from_files(data_files, earliest_date_tstamp):
     """
     Load tweet data into three dictionaries that include only the
     needed information: user IDs/screennames and retweet counts
@@ -70,6 +72,8 @@ def extract_data_from_files(data_files):
     Parameters:
     -----------
     - data_files(list) : a list of paths to files
+    - earliest_date_tstamp (timestamp) : the earliest date from which to consider
+        data for calculating FIB indices
 
     Returns:
     -----------
@@ -95,7 +99,7 @@ def extract_data_from_files(data_files):
 
     try:
         for file in data_files:
-            print(f"Loading tweets from file: {file}...")
+            print(f"Loading tweets from file: {file} ...")
             with gzip.open(file, "rb") as f:
                 for line in f:
                     tweet = Tweet_v1(json.loads(line.decode()))
@@ -107,9 +111,16 @@ def extract_data_from_files(data_files):
                         print("-" * 50)
                         continue
 
+                    timestamp_str = tweet.get_post_time(timestamp=True)
+                    timestamp = datetime.datetime.fromtimestamp(
+                        int(timestamp_str)
+                    ).timestamp()
+                    # Skip anything posted before the earliest date
+                    if timestamp < earliest_date_tstamp:
+                        continue
+
                     # Parse the base-level tweet
                     tweet_id = tweet.get_post_ID()
-                    timestamp = tweet.get_post_time(timestamp=True)
                     user_id = tweet.get_user_ID()
                     username = tweet.get_user_handle()
 
@@ -119,51 +130,65 @@ def extract_data_from_files(data_files):
                         rt_count = prev_rt_val
 
                     # Store the data
-                    tweetid_timestamp[tweet_id] = timestamp
+                    tweetid_timestamp[tweet_id] = timestamp_str
                     tweetid_max_rts[tweet_id] = rt_count
                     userid_tweetids[user_id].add(tweet_id)
                     userid_username[user_id] = username
 
                     # Handle retweets
                     if tweet.is_retweet:
-                        tweet_id = tweet.retweet_object.get_post_ID()
-                        timestamp = tweet.retweet_object.get_post_time(timestamp=True)
-                        user_id = tweet.retweet_object.get_user_ID()
-                        username = tweet.retweet_object.get_user_handle()
 
-                        rt_count = tweet.retweet_object.get_reshare_count()
-                        prev_rt_val = tweetid_max_rts[tweet_id]
-                        if prev_rt_val > rt_count:
-                            rt_count = prev_rt_val
+                        # Only keep base retweet objs that occurred on or after the earliest date
+                        timestamp_str = tweet.retweet_object.get_post_time(
+                            timestamp=True
+                        )
+                        timestamp = datetime.datetime.fromtimestamp(
+                            int(timestamp_str)
+                        ).timestamp()
+                        if timestamp >= earliest_date_tstamp:
+                            tweet_id = tweet.retweet_object.get_post_ID()
+                            user_id = tweet.retweet_object.get_user_ID()
+                            username = tweet.retweet_object.get_user_handle()
 
-                        # Store the data
-                        tweetid_timestamp[tweet_id] = timestamp
-                        tweetid_max_rts[tweet_id] = rt_count
-                        userid_tweetids[user_id].add(tweet_id)
-                        userid_username[user_id] = username
+                            rt_count = tweet.retweet_object.get_reshare_count()
+                            prev_rt_val = tweetid_max_rts[tweet_id]
+                            if prev_rt_val > rt_count:
+                                rt_count = prev_rt_val
+
+                            # Store the data
+                            tweetid_timestamp[tweet_id] = timestamp_str
+                            tweetid_max_rts[tweet_id] = rt_count
+                            userid_tweetids[user_id].add(tweet_id)
+                            userid_username[user_id] = username
 
                     # Handle quotes
                     if tweet.is_quote:
-                        tweet_id = tweet.quote_object.get_post_ID()
-                        timestamp = tweet.quote_object.get_post_time(timestamp=True)
-                        user_id = tweet.quote_object.get_user_ID()
-                        username = tweet.quote_object.get_user_handle()
 
-                        rt_count = tweet.quote_object.get_reshare_count()
-                        prev_rt_val = tweetid_max_rts[tweet_id]
-                        if prev_rt_val > rt_count:
-                            rt_count = prev_rt_val
+                        # Only keep base quote objs that occurred on or after the earliest date
+                        timestamp_str = tweet.quote_object.get_post_time(timestamp=True)
+                        timestamp = datetime.datetime.fromtimestamp(
+                            int(timestamp_str)
+                        ).timestamp()
+                        if timestamp >= earliest_date_tstamp:
+                            tweet_id = tweet.quote_object.get_post_ID()
+                            user_id = tweet.quote_object.get_user_ID()
+                            username = tweet.quote_object.get_user_handle()
 
-                        # Store the data
-                        tweetid_timestamp[tweet_id] = timestamp
-                        tweetid_max_rts[tweet_id] = rt_count
-                        userid_tweetids[user_id].add(tweet_id)
-                        userid_username[user_id] = username
+                            rt_count = tweet.quote_object.get_reshare_count()
+                            prev_rt_val = tweetid_max_rts[tweet_id]
+                            if prev_rt_val > rt_count:
+                                rt_count = prev_rt_val
+
+                            # Store the data
+                            tweetid_timestamp[tweet_id] = timestamp_str
+                            tweetid_max_rts[tweet_id] = rt_count
+                            userid_tweetids[user_id].add(tweet_id)
+                            userid_username[user_id] = username
 
         num_tweets = len(tweetid_max_rts.keys())
         num_users = len(userid_tweetids.keys())
-        print(f"Total Tweets Ingested = {num_tweets}")
-        print(f"Total Number of Users = {num_users}")
+        print(f"Total Tweets Ingested = {num_tweets:,}")
+        print(f"Total Number of Users = {num_users:,}")
 
         return (
             dict(tweetid_max_rts),
@@ -182,20 +207,25 @@ def extract_data_from_files(data_files):
 if __name__ == "__main__":
     # Parse input flags
     args = parse_cl_args_fib(SCRIPT_PURPOSE)
-    data_dirs = args.data
+    data_dir = args.data
     output_dir = args.out_dir
+    month_calculated = args.month_calculated
+    num_months = int(args.num_months)
     if output_dir is None:
         output_dir = "."
 
     # Retrieve all paths to data files
     print("Data will be extracted from here:")
-    data_files = []
-    for data_dir in data_dirs:
-        print(f"\t- {data_dir}")
-        lst_data_files = retrieve_paths_from_dir(data_dir, matching_str=MATCHING_STR)
-        data_files.extend(lst_data_files)
+    print(f"\t- {data_dir}")
+    data_files = sorted(glob.glob(os.path.join(data_dir, MATCHING_STR)))
+
     num_files = len(data_files)
     print(f"\nNum. files to process: {num_files}\n")
+
+    # Get the first date of
+    earliest_date_tstamp = get_earliest_date(
+        months_earlier=num_months, as_timestamp=True, month_calculated=month_calculated
+    )
 
     # Wrangle data and calculate FIB indices
     (
@@ -203,7 +233,7 @@ if __name__ == "__main__":
         userid_postids,
         userid_username,
         postid_timestamp,
-    ) = extract_data_from_files(data_files)
+    ) = extract_data_from_files(data_files, earliest_date_tstamp)
 
     print("Creating output dataframes...")
     userid_total_reshares = create_userid_total_reshares(
@@ -233,10 +263,15 @@ if __name__ == "__main__":
 
     # Save files
     print("Saving data...")
+    outdir_with_month = os.path.join(output_dir, month_calculated)
+    if not os.path.exists(outdir_with_month):
+        os.makedirs(outdir_with_month)
     today = datetime.datetime.now().strftime("%Y_%m_%d")
-    output_fib_fname = os.path.join(output_dir, f"{today}__fib_indices_twitter.parquet")
+    output_fib_fname = os.path.join(
+        outdir_with_month, f"{today}__fib_indices_twitter.parquet"
+    )
     output_rt_fname = os.path.join(
-        output_dir, f"{today}__top_spreader_posts_twitter.parquet"
+        outdir_with_month, f"{today}__top_spreader_posts_twitter.parquet"
     )
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
     top_spreader_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
