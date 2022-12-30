@@ -41,7 +41,7 @@ import os
 from collections import defaultdict
 from top_fibers_pkg.data_model import Tweet_v1
 from top_fibers_pkg.dates import get_earliest_date
-from top_fibers_pkg.utils import parse_cl_args_fib
+from top_fibers_pkg.utils import parse_cl_args_fib, get_logger
 from top_fibers_pkg.fib_helpers import (
     create_userid_total_reshares,
     create_userid_reshare_lists,
@@ -50,7 +50,8 @@ from top_fibers_pkg.fib_helpers import (
     create_top_spreader_df,
 )
 
-
+LOG_DIR = "/data_volume/top-fibers/logs"
+LOG_FNAME = "calc_twitter_fib_indices.log"
 SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
     "as well as the posts sent by the worst misinformation spreaders."
@@ -98,16 +99,16 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
     try:
         for file in data_files:
-            print(f"Loading tweets from file: {file} ...")
+            logger.info(f"Loading tweets from file: {file} ...")
             with gzip.open(file, "rb") as f:
                 for line in f:
                     tweet = Tweet_v1(json.loads(line.decode()))
 
                     if not tweet.is_valid():
-                        print("Skipping invalid tweet!!")
-                        print("-" * 50)
-                        print(tweet.post_object)
-                        print("-" * 50)
+                        logger.info("Skipping invalid tweet!!")
+                        logger.info("-" * 50)
+                        logger.info(tweet.post_object)
+                        logger.info("-" * 50)
                         continue
 
                     timestamp_str = tweet.get_post_time(timestamp=True)
@@ -186,8 +187,8 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
         num_tweets = len(tweetid_max_rts.keys())
         num_users = len(userid_tweetids.keys())
-        print(f"Total Tweets Ingested = {num_tweets:,}")
-        print(f"Total Number of Users = {num_users:,}")
+        logger.info(f"Total Tweets Ingested = {num_tweets:,}")
+        logger.info(f"Total Number of Users = {num_users:,}")
 
         return (
             dict(tweetid_max_rts),
@@ -204,8 +205,12 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 # Execute the program
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
+    logger = get_logger(LOG_DIR, LOG_FNAME)
+    logger.info("-" * 50)
+    logger.info(f"Begin script: {__file__}")
+
     # Parse input flags
-    args = parse_cl_args_fib(SCRIPT_PURPOSE)
+    args = parse_cl_args_fib(SCRIPT_PURPOSE, logger)
     data_dir = args.data
     output_dir = args.out_dir
     month_calculated = args.month_calculated
@@ -214,12 +219,12 @@ if __name__ == "__main__":
         output_dir = "."
 
     # Retrieve all paths to data files
-    print("Data will be extracted from here:")
-    print(f"\t- {data_dir}")
+    logger.info("Data will be extracted from here:")
+    logger.info(f"\t--> {data_dir}")
     data_files = sorted(glob.glob(os.path.join(data_dir, MATCHING_STR)))
 
     num_files = len(data_files)
-    print(f"\nNum. files to process: {num_files}\n")
+    logger.info(f"Num. files to process: {num_files}")
 
     # Get the first date of
     earliest_date_tstamp = get_earliest_date(
@@ -234,7 +239,7 @@ if __name__ == "__main__":
         postid_timestamp,
     ) = extract_data_from_files(data_files, earliest_date_tstamp)
 
-    print("Creating output dataframes...")
+    logger.info("Creating output dataframes...")
     userid_total_reshares = create_userid_total_reshares(
         postid_num_reshares, userid_postids
     )
@@ -245,9 +250,9 @@ if __name__ == "__main__":
         userid_reshare_lists, userid_username, userid_total_reshares
     )
 
-    print("Top spreader information:")
-    print(f"\t- Num. spreaders to select   : {NUM_SPREADERS}")
-    print(f"\t- Type of spreaders to select: {SPREADER_TYPE}")
+    logger.info("Top spreader information:")
+    logger.info(f"\t- Num. spreaders to select   : {NUM_SPREADERS}")
+    logger.info(f"\t- Type of spreaders to select: {SPREADER_TYPE}")
     top_spreaders = get_top_spreaders(fib_frame, NUM_SPREADERS, SPREADER_TYPE)
     top_spreader_df = create_top_spreader_df(
         top_spreaders, userid_postids, postid_num_reshares, postid_timestamp
@@ -261,7 +266,7 @@ if __name__ == "__main__":
     ).reset_index(drop=True)
 
     # Save files
-    print("Saving data...")
+    logger.info("Saving data...")
     outdir_with_month = os.path.join(output_dir, month_calculated)
     if not os.path.exists(outdir_with_month):
         os.makedirs(outdir_with_month)
@@ -275,4 +280,4 @@ if __name__ == "__main__":
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
     top_spreader_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
 
-    print("Script Complete.")
+    logger.info("Script Complete.")
