@@ -26,9 +26,26 @@ LOG_DIR = "/data_volume/top-fibers/logs"
 LOG_FNAME = "data_file_symlinks.log"
 
 
-def get_symlink_tuples(files, start, end, output_dir_w_month):
+def get_symlink_tuples(files, start, end, output_dir):
     """
     Create a list of (source, new_location) tuples.
+
+    Parameters:
+    --------------
+    - files (list(str)) : list of full paths to raw data files
+    - start (datetime.datetime) : earliest date allowed
+    - end (datetime.datetime) : oldest date allowed
+    - output_dir (datetime.datetime) : directory where symbolic link will be created
+
+    Returns
+    --------------
+    files_to_symlink (list(tuples)) : each tuple in this list will take the
+        following form: (source, new_location). Each string will be a
+        full path.
+
+    Exceptions
+    --------------
+    None
     """
     files_to_symlink = []
     for file in files:
@@ -40,7 +57,7 @@ def get_symlink_tuples(files, start, end, output_dir_w_month):
         start_date = dates_and_suffix[0].split("--")[0]
         date_obj = datetime.datetime.strptime(start_date, "%Y-%m-%d")
         if start <= date_obj < end:
-            new_location = os.path.join(output_dir_w_month, basename)
+            new_location = os.path.join(output_dir, basename)
             sym_tuple = (file, new_location)
             files_to_symlink.append(sym_tuple)
     return files_to_symlink
@@ -48,9 +65,30 @@ def get_symlink_tuples(files, start, end, output_dir_w_month):
 
 def create_sym_links(file_tuples):
     """
-    Create symbolic links based on the list of tuples provide
+    Create symbolic links based on the list of tuples provided.
+
+    Parameters:
+    --------------
+    - file_tuples (list(tuples)) : each tuple in this list will take the
+        following form: (raw_data_file, new_location). Each string will be a
+        full path.
+
+    Returns
+    --------------
+    None
+
+    Exceptions
+    --------------
+    TypeError
     """
     if not isinstance(file_tuples, list):
+        logger.error(
+            (
+                f"`files_tuple` must be a list. "
+                f"Currently, type is: {type(file_tuples)}"
+            ),
+            exc_info=True,
+        )
         raise TypeError(
             f"`files_tuple` must be a list. " f"Currently, type is: {type(file_tuples)}"
         )

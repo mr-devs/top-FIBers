@@ -140,6 +140,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
         )
 
     except Exception as e:
+        logger.exception(f"Problem parsing data file: {file}")
         raise Exception(e)
 
 
