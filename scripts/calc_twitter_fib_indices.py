@@ -4,13 +4,12 @@ Purpose:
     Calculate the FIB index for all users present in tweet files output by Moe's
     Tavern.
 
-Input:
-    FULL PATH to the top-level directories created by a Moe's Tavern query.
-    This script parses the actual tweetContent files (part-m-XXXXX) files from
-    those directories by grabbing all paths that contain the MATCHING_STR constant
-    defined below.
+Inputs:
+    - Those loaded by top_fibers_pkg.utils.parse_cl_args_fib
 
-    NOTE: Call the calc_twitter_fib_indices.py -h flag to get input/flag details.
+    NOTE:
+    - Call the calc_twitter_fib_indices.py -h flag to get input/flag details.
+    - Input files contain Twitter posts.
 
 Output:
     Two .parquet files containing:
