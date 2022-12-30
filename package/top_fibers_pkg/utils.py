@@ -158,13 +158,13 @@ def parse_cl_args_ct_dl(script_purpose=""):
 
     # Add long and short argument
     msg = (
-        "Full path to a file with one domain on each line. Posts will be downloaded "
-        "that include at least one of these domains"
+        "Full path to a directory of iffy domains files. One domain per line. "
+        "Posts will be downloaded that include at least one of these domains."
     )
     parser.add_argument(
         "-d",
-        "--domains-file",
-        metavar="Domains file",
+        "--domains-dir",
+        metavar="Domains dir",
         help=msg,
         required=True,
     )

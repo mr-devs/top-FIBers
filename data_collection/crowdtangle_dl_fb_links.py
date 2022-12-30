@@ -25,6 +25,7 @@ Author:
     Matthew R. DeVerna
 """
 import datetime
+import glob
 import gzip
 import json
 import os
@@ -54,15 +55,18 @@ WAIT_BTWN_ERROR_BASE = 2
 
 if __name__ == "__main__":
     args = parse_cl_args_ct_dl()
-    domains_filepath = args.domains_file  # Includes one domain on each line
+    domains_dir = args.domains_dir  # Includes one domain on each line
     output_dir = args.out_dir
     last_month = args.last_month
     num_months = int(args.num_months)
 
-    print(f"Domains file: {domains_filepath}")
+    print(f"Domains dir: {domains_dir}")
+    all_domains_files = sorted(glob.glob(os.path.join(domains_dir, "*iffy_list.txt")))
+    latest_domains_filepath = all_domains_files[-1]
+    print(f"Domains file: {latest_domains_filepath}")
 
     # Load domains to match in below query and clean up
-    domains = load_lines(domains_filepath)
+    domains = load_lines(latest_domains_filepath)
     domains = [domain.replace("https://", "") for domain in domains]
     domains = [domain.replace("http://", "") for domain in domains]
     domains = [domain.replace("www.", "") for domain in domains]
