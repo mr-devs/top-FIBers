@@ -1,0 +1,133 @@
+"""
+Purpose:
+    A script to count the number of posts that we have in all raw files contained in
+    the data directory provided.
+
+    Note: Previously counted files are skipped.
+
+Inputs:
+    -o / --output-dir: Full path to the output directory where you'd like to save post counts
+    -d / --data-dir: Full path to the raw posts directory
+    -p / --platform: The platform posts you want to count
+
+Outputs:
+    File saved in the `output_dir`. Filenames created based on `platform`:
+        - {platform}_post_counts_by_file.parquet
+
+Author: Matthew DeVerna
+"""
+import argparse
+import datetime
+import glob
+import gzip
+import os
+
+import pandas as pd
+
+SCRIPT_PURPOSE = (
+    "Count the number of posts that we have in all "
+    "raw files contained in the data dir provided"
+)
+
+
+def parse_cl_args(script_purpose=""):
+    """
+    Read command line arguments for the script that downloads Facebook posts from
+    CrowdTangle.
+        - top-fibers/data_collection/crowdtangle_dl_fb_links.py
+
+    Parameters:
+    --------------
+    - script_purpose (str) : Purpose of the script being utilized. When printing
+        script help message via `python script.py -h`, this will represent the
+        script's description. Default = "" (an empty string)
+
+    Returns
+    --------------
+    None
+
+    Exceptions
+    --------------
+    None
+    """
+    print("Parsing command line arguments...")
+
+    # Initiate the parser
+    parser = argparse.ArgumentParser(description=script_purpose)
+
+    parser.add_argument(
+        "-o",
+        "--output-dir",
+        metavar="Output directory",
+        help="Full path to the output directory where you'd like to save post counts",
+        required=True,
+    )
+    parser.add_argument(
+        "-d",
+        "--data-dir",
+        metavar="Data dir",
+        help="Full path to the raw posts directory (subdirs should be 'twitter' and 'facebook')",
+        required=True,
+    )
+    parser.add_argument(
+        "-p",
+        "--platform",
+        metavar="Platform",
+        help="The platform posts you want to count",
+        choices=["twitter", "facebook"],
+        required=True,
+    )
+
+    # Read parsed arguments from the command line into "args"
+    args = parser.parse_args()
+
+    return args
+
+
+if __name__ == "__main__":
+    args = parse_cl_args(SCRIPT_PURPOSE)
+    output_dir = args.output_dir
+    data_dir = args.data_dir
+    platform = args.platform
+
+    # Load output file if it exists
+    output_filepath = os.path.join(
+        output_dir, f"{platform}_post_counts_by_file.parquet"
+    )
+    previously_counted_files = None
+    if os.path.exists(output_filepath):
+        existing_counts_df = pd.read_parquet(output_filepath)
+        previously_counted_files = set(existing_counts_df["file_name"])
+
+    # Get all raw files full paths
+    raw_files_dir = os.path.join(data_dir, platform)
+    print(f"Counting files found here: {raw_files_dir}")
+    files = sorted(glob.glob(os.path.join(raw_files_dir, "*.jsonl.gzip")))
+    num_files = len(files)
+    print(f"Number of files: {num_files}")
+
+    data = []
+    for fnum, file in enumerate(files, start=1):
+
+        print(f"Working on file ({fnum}/{num_files}): {file}")
+        if previously_counted_files is not None and file in previously_counted_files:
+            print("Skipping file because it has already been counted.")
+            continue
+
+        with gzip.open(file, "rb") as f:
+            data.append({"file_name": file, "num_posts": sum(1 for post in f)})
+
+    print("Creating counts dataframe...")
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    counts_df = pd.DataFrame.from_records(data)
+    counts_df["date_counted"] = today
+
+    if previously_counted_files is not None:
+        print("Merging existing counts with new counts...")
+        counts_df = pd.concat([existing_counts_df, counts_df])
+
+    print(f"Saving counts dataframe here: {output_filepath} ...")
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    counts_df.to_parquet(output_filepath, index=False, engine="pyarrow")
+    print("Script complete.")
