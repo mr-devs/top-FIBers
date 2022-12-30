@@ -3,12 +3,11 @@ A very simple data class that is used to extract the information needed in the
 calc_fib_indices.py script.
 """
 import datetime
-import pytz
 
-from .utils import get_dict_val
+from .data import get_dict_val
 
 TWITTER_V1_DT_CONVERSION_STR = "%a %b %d %H:%M:%S %z %Y"
-TWITTER_V2_DT_CONVERSION_STR = None # TODO: Update when V2 added
+TWITTER_V2_DT_CONVERSION_STR = None  # TODO: Update when V2 added
 CROWDTANGLE_DT_CONVERSION_STR = "%Y-%m-%d %H:%M:%S"
 
 
@@ -153,14 +152,16 @@ class Tweet_v1(PostBase):
         if not timestamp:
             return created_at
         try:
-            dt_obj = datetime.datetime.strptime(created_at, TWITTER_V1_DT_CONVERSION_STR)
+            dt_obj = datetime.datetime.strptime(
+                created_at, TWITTER_V1_DT_CONVERSION_STR
+            )
             return str(int(dt_obj.timestamp()))
         except:
             return None
 
     def get_reshare_count(self):
         """
-        Return the number of of times this post was reshared (i.e., the retweet count) 
+        Return the number of of times this post was reshared (i.e., the retweet count)
         """
         return self.get_value(["retweet_count"])
 
@@ -177,7 +178,9 @@ class Tweet_v1(PostBase):
         Return the link to the tweet (str)
         so that one can click it and check the tweet in a web browser
         """
-        return f"https://twitter.com/{self.get_user_handle()}/status/{self.get_post_ID()}"
+        return (
+            f"https://twitter.com/{self.get_user_handle()}/status/{self.get_post_ID()}"
+        )
 
     def get_user_ID(self):
         """
@@ -272,7 +275,9 @@ class FbIgPost(PostBase):
         if not timestamp:
             return created_at
         try:
-            dt_obj = datetime.datetime.strptime(created_at, CROWDTANGLE_DT_CONVERSION_STR)
+            dt_obj = datetime.datetime.strptime(
+                created_at, CROWDTANGLE_DT_CONVERSION_STR
+            )
             return str(int(dt_obj.timestamp()))
         except:
             return None
