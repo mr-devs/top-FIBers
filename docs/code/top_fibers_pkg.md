@@ -7,7 +7,7 @@ last_modified: "2022-11-13"
 [`top_fibers_pkg`](https://github.com/mr-devs/top-fibers/tree/main/package) is meant to be a locally maintained package that contains helpful data models, script helpers, and utility functions.
 The intention is to keep things as clean and easy to maintain as possible.
 
-As of 2022-11-11, there are three modules which are all heavily documented. 
+There are three modules which are all heavily documented. 
 For details, please see the code itself, however, below we list the modules and briefly describe the code contained within them.
 
 - [`data_model.py`](https://github.com/mr-devs/top-fibers/blob/main/package/top_fibers_pkg/data_model.py): Contains classes that can read and process Twitter V1 tweet objects. These make code that extracts information from raw data much more robust and easier to understand (we hope).
