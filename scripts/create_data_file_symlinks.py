@@ -4,21 +4,15 @@ Purpose:
     raw data files. The directory name and files chosen are based on the inputs.
 
 Inputs:
-    - Date to use as the "base date" that everything revolves around
-    - Output directory where we'd like to create the new directory
+    - Those loaded by top_fibers_pkg.utils.parse_cl_args_symlinks
 
 Outputs:
     Creates a directory (named based on base date; format "%Y_%m") with the
     following contents:
-    - YYYY_MM
-    |   |- twitter
-    |   |   |- sym_link_to_raw_twitter_files_from_moe_1
-    |   |   |- sym_link_to_raw_twitter_files_from_moe_2
-    |   |   |- ...
-    |   |- facebook
-    |   |   |- sym_link_to_raw_facebook_files_from_crowdtangle_1
-    |   |   |- sym_link_to_raw_facebook_files_from_crowdtangle_2
-    |   |   |- ...
+    |- YYYY_MM
+    |   |- sym_link_to_raw_file_1
+    |   |- sym_link_to_raw_file_2
+    |   |- ...
 """
 import datetime
 import glob
@@ -34,7 +28,7 @@ def get_symlink_tuples(files, start, end, output_dir_w_month):
     """
     files_to_symlink = []
     for file in files:
-        # Example format: 2022-04-01--2022-04-30__fb_posts_w_links.jsonl.gzip
+        # Example basename: 2022-04-01--2022-04-30__fb_posts_w_links.jsonl.gzip
         basename = os.path.basename(file)
         dates_and_suffix = basename.split("__")
         start_date = dates_and_suffix[0].split("--")[0]
@@ -65,23 +59,6 @@ def create_sym_links(file_tuples):
     print("All symbolic links created.")
 
 
-# data_path = "/data_volume/top-fibers/data/crowdtangle"
-
-# # date calculated
-# # num months
-# # output directory
-# # data directory
-# # PLATFORM
-
-
-# input_date = "2022_01"
-# output_dir = "/data_volume/top-fibers/data/symbolic_links"
-# output_dir_w_month = os.path.join(output_dir, input_date)
-# if not os.path.exists(output_dir_w_month):
-#     os.makedirs(output_dir_w_month)
-# NUM_MONTHS = 3
-
-
 if __name__ == "__main__":
     args = parse_cl_args_symlinks()
     data_path = args.data
@@ -103,7 +80,5 @@ if __name__ == "__main__":
         os.makedirs(output_dir_w_month)
 
     files = glob.glob(os.path.join(data_path, "*.gzip"))
-
     files_to_symlink = get_symlink_tuples(files, start, end, output_dir_w_month)
-
     create_sym_links(files_to_symlink)
