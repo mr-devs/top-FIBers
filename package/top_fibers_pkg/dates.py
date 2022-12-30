@@ -36,25 +36,27 @@ def retrieve_paths_from_dir(dir_path, matching_str="part*.gz"):
     return data_paths
 
 
-def get_start_and_end_dates(num_months, offset):
+def get_start_and_end_dates(num_months, last_month):
     """
-    Return start and end dates (in datetime objects) based on the inputs.
+    Return start and end dates datetime objects that encompases the number of
+    months requested, going backward in time from `last_month` (inclusive).
+
+    Example:
+    get_start_and_end_dates(num_months=3, last_month="2022_12")
+    >>> (datetime.datetime(2022, 10, 31, 0, 0),
+        datetime.datetime(2022, 12, 31, 23, 59, 59))
 
     Parameters:
     ------------
     - num_months (int): the number of continuous months to encapsulate capture
         between start_date and end_date
-    - offset (int): number of months to offset from the current month. Utilized
-        to set the end date month.
-        - If offset = 0: end date month is datetime.datetime.now().month
-        - If offset = -1: end date month is datetime.datetime.now().month - 1 (previous month)
-        - If offset = 1: end date month is datetime.datetime.now().month + 1 (following month)
+    - last_month (str) : the month from which to work backwards from
 
     Returns:
     ------------
     (start_date, end_date) where...
     - start_date (datetime.date): will always be the first day of the month
-    - end_date (datetime.date): will always be the last day of that month
+    - end_date (datetime.date): will always be the last day of the last_month
 
     Exception:
     -----------
@@ -65,22 +67,18 @@ def get_start_and_end_dates(num_months, offset):
             "`num_months` must be an integer. "
             f"Currently its type is: {type(num_months)}"
         )
-    if not isinstance(offset, int):
+    if not isinstance(last_month, str):
         raise TypeError(
-            "`offset` must be an integer. " f"Currently its type is: {type(offset)}"
+            "`offset` must be a str. " f"Currently its type is: {type(last_month)}"
         )
 
-    # Get current date as anchor point in time
-    now = datetime.datetime.now()
-
-    # Get date, offset by the correct number of months (accounts for year change)
-    # Add one to offset so it's easier to get end_date
-    offset_dt = now + relativedelta(months=offset + 1)
-    end_date = offset_dt - datetime.timedelta(days=offset_dt.day)
-    end_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
-    start_date = end_date - relativedelta(months=num_months - 1)
-    start_date = start_date.replace(day=1)
+    end_month = datetime.datetime.strptime(last_month, "%Y_%m")
+    end_month_plus_one = end_month + relativedelta(months=1)
+    end_date = end_month_plus_one - relativedelta(days=1)
     end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=0)
+
+    start_date = end_date - relativedelta(months=num_months - 1)
+    start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
     return (start_date, end_date)
 
 
