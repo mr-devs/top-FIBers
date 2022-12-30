@@ -9,10 +9,7 @@ Purpose:
             - OFFSET
 
 Inputs:
-    Required:
-        -d / --domains-file: Full path to a file with one domain on each line.
-            Posts will be downloaded that include at least one of these domains
-        -o / --out-dir: Directory where you'd like to save the output data
+    Those loaded by top_fibers_pkg.utils.parse_cl_args_ct_dl
 
 Outputs:
     One new-line delimited json.gz file with all posts from FB for the specified period.
@@ -23,7 +20,8 @@ Outputs:
             - NOTE: end_date is NOT inclusive. This means that a date range like
                 2022-11-05-2022-11-06 indicates that the data was pulled for
                 only 2022-11-05.
-Authors:
+
+Author:
     Matthew R. DeVerna
 """
 import datetime
@@ -36,18 +34,16 @@ from top_fibers_pkg.dates import get_start_and_end_dates
 from top_fibers_pkg.crowdtangle_helpers import ct_get_search_posts
 from top_fibers_pkg.utils import parse_cl_args_ct_dl, load_lines
 
-SCRIPT_PURPOSE = (
-    "Download Facebook posts from Facebook that contain domains from a list."
-)
+SCRIPT_PURPOSE = "Download Facebook posts from CrowdTangle based on a list of links."
 
 LOG_FILE_NAME = "top_fibers_fb_link_dl.log"
-NUMBER_OF_MONTHS_TO_PULL = 1
+# NUMBER_OF_MONTHS_TO_PULL = 1
 NUMBER_OF_POSTS_PER_CALL = 10_000
 
 # Sets the end date. Must be <= 0.
 # If OFFSET = 0, end_date is last day of current month
 # If OFFSET = -1, end_date is last day of previous month
-OFFSET = -1
+# OFFSET = -1
 
 # Number of seconds to wait before every query, regardless of success or error
 WAIT_BTWN_POSTS = 8
@@ -60,6 +56,8 @@ if __name__ == "__main__":
     args = parse_cl_args_ct_dl()
     domains_filepath = args.domains_file  # Includes one domain on each line
     output_dir = args.out_dir
+    last_month = args.last_month
+    num_months = int(args.num_months)
 
     print(f"Domains file: {domains_filepath}")
 
@@ -79,11 +77,14 @@ if __name__ == "__main__":
         )
 
     # Set start and end dates
-    if OFFSET > 0:
-        raise ValueError("OFFSET must be <= 0.")
-    start_date, end_date = get_start_and_end_dates(
-        num_months=NUMBER_OF_MONTHS_TO_PULL, offset=OFFSET
-    )
+    start_date, end_date = get_start_and_end_dates(num_months, last_month)
+    current_time = datetime.datetime.now()
+    if end_date > current_time:
+        raise ValueError(
+            "`end_date` cannot be after `current_time`!\n"
+            f"\t end_date     : {end_date}\n"
+            f"\t current_time : {current_time}\n"
+        )
 
     print(f"Start date  : {start_date}")
     print(f"End date    : {end_date}")

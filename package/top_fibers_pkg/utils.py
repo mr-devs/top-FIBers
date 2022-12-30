@@ -175,6 +175,20 @@ def parse_cl_args_ct_dl(script_purpose=""):
         help="Directory where you'd like to save the output data",
         required=True,
     )
+    parser.add_argument(
+        "-l",
+        "--last-month",
+        metavar="Last month",
+        help="The last month from which you'd like to download facebook posts",
+        required=True,
+    )
+    parser.add_argument(
+        "-n",
+        "--num-months",
+        metavar="Number of months",
+        help="The number of months that you'd like to download (works backwards from --last-month)",
+        required=True,
+    )
 
     # Read parsed arguments from the command line into "args"
     args = parser.parse_args()
