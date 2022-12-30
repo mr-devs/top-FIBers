@@ -1,5 +1,5 @@
 """
-Functions used to communicate with the CrowdTangle API
+Functions used in the CrowdTangle download script
 """
 import datetime
 import requests
