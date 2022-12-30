@@ -4,10 +4,8 @@ Purpose:
     Calculate the FIB index for all users present in CrowdTangle files downloaded
     with INSERT DOWNLOAD SCRIPT NAME HERE.
 
-Input:
-    FULL PATH to the top-level directory that contains all CrowdTangle files.
-    This script identifies the data files files from those directories by
-    grabbing all paths that contain the MATCHING_STR constant defined below.
+Inputs:
+    - Those loaded by top_fibers_pkg.utils.parse_cl_args_fib
 
     NOTE:
     - Call the calc_crowdtangle_fib_indices.py -h flag to get input/flag details.
