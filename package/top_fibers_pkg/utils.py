@@ -242,7 +242,7 @@ def get_logger(log_dir, log_fname, also_print=False):
 
     # Configure file handler
     formatter = logging.Formatter(
-        fmt="%(asctime)s-%(name)s-%(levelname)s-%(message)s",
+        fmt="%(asctime)s-%(name)s-%(levelname)s - %(message)s",
         datefmt="%Y-%m-%d_%H:%M:%S",
     )
     full_log_path = os.path.join(log_dir, log_fname)
