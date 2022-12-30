@@ -22,15 +22,19 @@ import glob
 import gzip
 import os
 
+from top_fibers_pkg.utils import get_logger
+
 import pandas as pd
 
 SCRIPT_PURPOSE = (
     "Count the number of posts that we have in all "
     "raw files contained in the data dir provided"
 )
+LOG_DIR = "/data_volume/top-fibers/logs"
+LOG_FNAME = "post_count.log"
 
 
-def parse_cl_args(script_purpose=""):
+def parse_cl_args(script_purpose="", logger=None):
     """
     Read command line arguments for the script that downloads Facebook posts from
     CrowdTangle.
@@ -41,6 +45,7 @@ def parse_cl_args(script_purpose=""):
     - script_purpose (str) : Purpose of the script being utilized. When printing
         script help message via `python script.py -h`, this will represent the
         script's description. Default = "" (an empty string)
+    - logger : a logging object
 
     Returns
     --------------
@@ -50,7 +55,7 @@ def parse_cl_args(script_purpose=""):
     --------------
     None
     """
-    print("Parsing command line arguments...")
+    logger.info("Parsing command line arguments...")
 
     # Initiate the parser
     parser = argparse.ArgumentParser(description=script_purpose)
@@ -85,10 +90,16 @@ def parse_cl_args(script_purpose=""):
 
 
 if __name__ == "__main__":
-    args = parse_cl_args(SCRIPT_PURPOSE)
+    logger = get_logger(LOG_DIR, LOG_FNAME)
+    logger.info("-" * 50)
+    logger.info(f"Begin script: {__file__}")
+
+    args = parse_cl_args(SCRIPT_PURPOSE, logger)
     output_dir = args.output_dir
     data_dir = args.data_dir
     platform = args.platform
+
+    logger.info(f"Counting posts for: {platform}")
 
     # Load output file if it exists
     output_filepath = os.path.join(
@@ -101,33 +112,33 @@ if __name__ == "__main__":
 
     # Get all raw files full paths
     raw_files_dir = os.path.join(data_dir, platform)
-    print(f"Counting files found here: {raw_files_dir}")
+    logger.info(f"Counting files found here: {raw_files_dir}")
     files = sorted(glob.glob(os.path.join(raw_files_dir, "*.jsonl.gzip")))
     num_files = len(files)
-    print(f"Number of files: {num_files}")
+    logger.info(f"Number of files: {num_files}")
 
     data = []
     for fnum, file in enumerate(files, start=1):
 
-        print(f"Working on file ({fnum}/{num_files}): {file}")
+        logger.info(f"Working on file ({fnum}/{num_files}): {file}")
         if previously_counted_files is not None and file in previously_counted_files:
-            print("Skipping file because it has already been counted.")
+            logger.info("Skipping file because it has already been counted.")
             continue
 
         with gzip.open(file, "rb") as f:
             data.append({"file_name": file, "num_posts": sum(1 for post in f)})
 
-    print("Creating counts dataframe...")
+    logger.info("Creating counts dataframe...")
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     counts_df = pd.DataFrame.from_records(data)
     counts_df["date_counted"] = today
 
     if previously_counted_files is not None:
-        print("Merging existing counts with new counts...")
+        logger.info("Merging existing counts with new counts...")
         counts_df = pd.concat([existing_counts_df, counts_df])
 
-    print(f"Saving counts dataframe here: {output_filepath} ...")
+    logger.info(f"Saving counts dataframe here: {output_filepath} ...")
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     counts_df.to_parquet(output_filepath, index=False, engine="pyarrow")
-    print("Script complete.")
+    logger.info("Script complete.")
