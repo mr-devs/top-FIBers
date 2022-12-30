@@ -92,7 +92,7 @@ def get_earliest_date(months_earlier, as_timestamp=False, month_calculated=None)
 
     Example:
     months_earlier = 3
-    month_calculated = "2022-12"
+    month_calculated = "2022_12"
     earliest_date = get_earliest_date(months_earlier, as_timestamp=False, month_calculated=month_calculated)
     print(earliest_date)
     >>> 2022-08-01 00:00:00
@@ -103,7 +103,7 @@ def get_earliest_date(months_earlier, as_timestamp=False, month_calculated=None)
     - as_timestamp (bool) : if True, return as timestamp; if False, return as datetime object
         default = False
     - month_calculated (str) : the anchor date from which to identify the earliest date.
-        Format must be "%Y-%m"
+        Format must be "%Y_%m"
 
     Return:
     -----------
@@ -131,7 +131,7 @@ def get_earliest_date(months_earlier, as_timestamp=False, month_calculated=None)
         )
 
     # Use month_calculated as anchor point in time
-    month_calculated_dt = datetime.datetime.strptime(month_calculated, "%Y-%m")
+    month_calculated_dt = datetime.datetime.strptime(month_calculated, "%Y_%m")
 
     # Get date, offset by the input number of months_earlier (accounts for year change)
     offset_dt = month_calculated_dt - relativedelta(months=months_earlier)
