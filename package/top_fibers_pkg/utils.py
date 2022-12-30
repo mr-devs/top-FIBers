@@ -227,7 +227,7 @@ def load_lines(file_path):
         return [line.rstrip() for line in f]
 
 
-def get_logger(log_dir, log_fname, also_print=False):
+def get_logger(log_dir, log_fname, script_name=None, also_print=False):
     """Create logger."""
 
     # Create log_dir if it doesn't exist already
@@ -237,7 +237,7 @@ def get_logger(log_dir, log_fname, also_print=False):
         pass
 
     # Create logger and set level
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(script_name)
     logger.setLevel(level=logging.INFO)
 
     # Configure file handler
