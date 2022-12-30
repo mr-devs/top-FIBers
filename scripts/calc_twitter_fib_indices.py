@@ -267,8 +267,9 @@ if __name__ == "__main__":
     ).reset_index(drop=True)
 
     # Save files
-    logger.info("Saving data...")
     outdir_with_month = os.path.join(output_dir, month_calculated)
+    logger.info("Saving data here:")
+    logger.info(f"\t- {outdir_with_month}")
     if not os.path.exists(outdir_with_month):
         os.makedirs(outdir_with_month)
     today = datetime.datetime.now().strftime("%Y_%m_%d")
