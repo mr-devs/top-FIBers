@@ -32,12 +32,11 @@ import json
 import os
 import time
 
-from top_fibers_pkg.crowdtangle_helpers import ct_get_search_posts
-from top_fibers_pkg.utils import (
-    parse_cl_args_ct_dl,
-    load_lines,
+from top_fibers_pkg.crowdtangle_helpers import (
+    ct_get_search_posts,
     get_start_and_end_dates,
 )
+from top_fibers_pkg.utils import parse_cl_args_ct_dl, load_lines
 
 SCRIPT_PURPOSE = (
     "Download Facebook posts from Facebook that contain domains from a list."
