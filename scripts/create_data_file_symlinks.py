@@ -28,7 +28,9 @@ def get_symlink_tuples(files, start, end, output_dir_w_month):
     """
     files_to_symlink = []
     for file in files:
-        # Example basename: 2022-04-01--2022-04-30__fb_posts_w_links.jsonl.gzip
+        # Example basenames:
+        #  Facebook: 2022-04-01--2022-04-30__fb_posts_w_links.jsonl.gzip
+        #  Twitter : 2022-11-01__tweets_w_links.jsonl.gzip
         basename = os.path.basename(file)
         dates_and_suffix = basename.split("__")
         start_date = dates_and_suffix[0].split("--")[0]
