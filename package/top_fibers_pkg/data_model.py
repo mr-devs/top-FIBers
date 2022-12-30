@@ -1,6 +1,6 @@
 """
-A very simple data class that is used to extract the information needed in the
-calc_fib_indices.py script.
+A data class that is used to extract the information needed in the
+fib calculation scripts.
 """
 import datetime
 
