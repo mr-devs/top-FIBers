@@ -78,7 +78,7 @@ def get_start_and_end_dates(num_months, last_month):
     end_date = end_date.replace(hour=23, minute=59, second=59, microsecond=0)
 
     start_date = end_date - relativedelta(months=num_months - 1)
-    start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = start_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     return (start_date, end_date)
 
 
