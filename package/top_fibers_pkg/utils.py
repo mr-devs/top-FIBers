@@ -33,31 +33,30 @@ def parse_cl_args_symlinks(script_purpose="", logger=None):
     parser = argparse.ArgumentParser(description=script_purpose)
 
     # Add long and short argument
-    msg = (
-        "One or more paths to directories that contain data files with tweets/posts. "
-        "Will recursively iterate through all subdirectors to find files that match "
-        "the MATCHING_STR parameter specified within the script. "
-        "Tweet/post files should be new-line delimited json.gz"
-    )
     parser.add_argument(
         "-d",
         "--data",
-        metavar="Data",
+        metavar="Data Directory",
         help="Data directory that contains the raw data files",
         required=True,
+    )
+    msg = (
+        "Full path to the output directory. "
+        "The input for --month-calculated will be created as a subdirectory of "
+        "this directory and data will be saved there."
     )
     parser.add_argument(
         "-o",
         "--out-dir",
         metavar="Output dir",
-        help="Directory where you'd like to save the output data",
+        help=msg,
         required=True,
     )
     parser.add_argument(
         "-m",
         "--month-calculated",
         metavar="Month calculated",
-        help="The month for which you'd like to calculate FIB indices (YYYY-MM)",
+        help="The month for which you'd like to calculate FIB indices (YYYY_MM)",
         required=True,
     )
     parser.add_argument(
@@ -103,16 +102,21 @@ def parse_cl_args_fib(script_purpose="", logger=None):
     # Add long and short argument
     parser.add_argument(
         "-d",
-        "--data",
-        metavar="Data",
-        help="Full path to the data you'd like to calculate FIB indices for",
+        "--data-dir",
+        metavar="Data Directory",
+        help="Full path to the directory containing files to use in FIB calculations",
         required=True,
+    )
+    msg = (
+        "Full path to the output directory. "
+        "The input for --month-calculated will be created as a subdirectory of "
+        "this directory and data will be saved there."
     )
     parser.add_argument(
         "-o",
         "--out-dir",
-        metavar="Output dir",
-        help="Directory where you'd like to save the output data",
+        metavar="Output Directory",
+        help=msg,
         required=True,
     )
     parser.add_argument(
@@ -164,7 +168,7 @@ def parse_cl_args_ct_dl(script_purpose="", logger=None):
 
     # Add long and short argument
     msg = (
-        "Full path to a directory of iffy domains files. One domain per line. "
+        "Full path to a DIRECTORY of iffy domains files. One domain per line. "
         "Posts will be downloaded that include at least one of these domains."
     )
     parser.add_argument(
@@ -185,7 +189,7 @@ def parse_cl_args_ct_dl(script_purpose="", logger=None):
         "-l",
         "--last-month",
         metavar="Last month",
-        help="The last month from which you'd like to download facebook posts",
+        help="The last month from which you'd like to download facebook posts. (YYYY_MM)",
         required=True,
     )
     parser.add_argument(
