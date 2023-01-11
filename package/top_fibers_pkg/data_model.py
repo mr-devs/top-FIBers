@@ -194,6 +194,12 @@ class Tweet_v1(PostBase):
         """
         return self.get_value(["user", "screen_name"])
 
+    def get_link_to_author(self):
+        """
+        Return the link to the tweet author
+        """
+        return f"https://twitter.com/i/user/{self.get_user_handle()}"
+
     def __repr__(self):
         """
         Define the representation of the object.
@@ -292,7 +298,7 @@ class FbIgPost(PostBase):
         """
         Return the ID of the post as a string
         """
-        return str(self.get_value(["id"]))
+        return str(self.get_value(["platformId"]))
 
     def get_link_to_post(self):
         """
@@ -305,13 +311,19 @@ class FbIgPost(PostBase):
         """
         Return the ID of the user as a string
         """
-        return str(self.get_value(["account", "id"]))
+        return str(self.get_value(["account", "platformId"]))
 
     def get_user_handle(self):
         """
         Return the account handle of the user (str)
         """
         return self.get_value(["account", "handle"])
+
+    def get_link_to_author(self):
+        """
+        Return the link to the authors page
+        """
+        return self.get_value(["account", "url"])
 
     def __repr__(self):
         """
