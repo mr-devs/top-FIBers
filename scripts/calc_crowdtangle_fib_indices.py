@@ -83,6 +83,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
     - userid_postids (dict) : maps user IDs to a set of (str) post IDs
     - postid_timestamp (dict) : maps post IDs to (str) timestamps
     - postid_num_reshares (dict) : maps post IDs to number of reshares (int)
+    - postid_url (dict) : maps post IDs to (str) post URLs
 
     Exceptions:
     -----------
@@ -96,6 +97,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
     userid_postids = defaultdict(set)
 
     postid_timestamp = dict()
+    postid_url = dict()
     postid_num_reshares = defaultdict(int)
 
     logger.info("Begin extracting data.")
@@ -109,6 +111,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                         continue
 
                     post_id = post_obj.get_post_ID()
+                    post_url = post_obj.get_link_to_post()
                     timestamp_str = post_obj.get_post_time(timestamp=True)
                     timestamp = datetime.datetime.fromtimestamp(
                         int(timestamp_str)
@@ -124,6 +127,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
                     postid_num_reshares[post_id] = reshare_count
                     postid_timestamp[post_id] = timestamp_str
+                    postid_url[post_id] = post_url
                     userid_username[user_id] = username
                     userid_postids[user_id].add(post_id)
 
@@ -137,6 +141,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
             dict(userid_postids),
             postid_timestamp,
             dict(postid_num_reshares),
+            postid_url,
         )
 
     except Exception as e:
@@ -148,18 +153,16 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
     script_name = os.path.basename(__file__)
-    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
+    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
     logger.info("-" * 50)
     logger.info(f"Begin script: {__file__}")
 
     # Parse input flags
     args = parse_cl_args_fib(SCRIPT_PURPOSE, logger)
-    data_dir = args.data
+    data_dir = args.data_dir
     output_dir = args.out_dir
     month_calculated = args.month_calculated
     num_months = int(args.num_months)
-    if output_dir is None:
-        output_dir = "."
 
     # Retrieve all paths to data files
     logger.info("Data will be extracted from here:")
@@ -180,26 +183,44 @@ if __name__ == "__main__":
         userid_postids,
         postid_timestamp,
         postid_num_reshares,
+        postid_url,
     ) = extract_data_from_files(data_files, earliest_date_tstamp)
 
     logger.info("Creating output dataframes...")
-    userid_total_reshares = create_userid_total_reshares(
-        postid_num_reshares, userid_postids
-    )
-    userid_reshare_lists = create_userid_reshare_lists(
-        postid_num_reshares, userid_postids
-    )
-    fib_frame = create_fib_frame(
-        userid_reshare_lists, userid_username, userid_total_reshares
-    )
+    try:
+        userid_total_reshares = create_userid_total_reshares(
+            postid_num_reshares, userid_postids
+        )
+        userid_reshare_lists = create_userid_reshare_lists(
+            postid_num_reshares, userid_postids
+        )
+    except Exception as e:
+        logger.exception(f"Problem creating secondary lookup maps!")
+        raise Exception(e)
+
+    try:
+        fib_frame = create_fib_frame(
+            userid_reshare_lists, userid_username, userid_total_reshares
+        )
+    except Exception as e:
+        logger.exception(f"Problem creating FIB frame!")
+        raise Exception(e)
 
     logger.info("Top spreader information:")
     logger.info(f"\t- Num. spreaders to select   : {NUM_SPREADERS}")
     logger.info(f"\t- Type of spreaders to select: {SPREADER_TYPE}")
-    top_spreaders = get_top_spreaders(fib_frame, NUM_SPREADERS, SPREADER_TYPE)
-    top_spreader_df = create_top_spreader_df(
-        top_spreaders, userid_postids, postid_num_reshares, postid_timestamp
-    )
+    try:
+        top_spreaders = get_top_spreaders(fib_frame, NUM_SPREADERS, SPREADER_TYPE)
+        top_spreader_df = create_top_spreader_df(
+            top_spreaders,
+            userid_postids,
+            postid_num_reshares,
+            postid_timestamp,
+            postid_url,
+        )
+    except Exception as e:
+        logger.exception(f"Problem creating top spreaders df")
+        raise Exception(e)
 
     fib_frame = fib_frame.sort_values("fib_index", ascending=False).reset_index(
         drop=True

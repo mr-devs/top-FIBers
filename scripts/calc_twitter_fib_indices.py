@@ -93,7 +93,9 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
         raise TypeError("All `data_files` must be a string!")
 
     tweetid_timestamp = dict()
+    tweetid_url = dict()
     tweetid_max_rts = defaultdict(int)
+
     userid_tweetids = defaultdict(set)
     userid_username = dict()
 
@@ -121,6 +123,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
                     # Parse the base-level tweet
                     tweet_id = tweet.get_post_ID()
+                    tweet_url = tweet.get_link_to_post()
                     user_id = tweet.get_user_ID()
                     username = tweet.get_user_handle()
 
@@ -132,6 +135,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                     # Store the data
                     tweetid_timestamp[tweet_id] = timestamp_str
                     tweetid_max_rts[tweet_id] = rt_count
+                    tweetid_url[tweet_id] = tweet_url
                     userid_tweetids[user_id].add(tweet_id)
                     userid_username[user_id] = username
 
@@ -147,6 +151,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                         ).timestamp()
                         if timestamp >= earliest_date_tstamp:
                             tweet_id = tweet.retweet_object.get_post_ID()
+                            tweet_url = tweet.retweet_object.get_link_to_post()
                             user_id = tweet.retweet_object.get_user_ID()
                             username = tweet.retweet_object.get_user_handle()
 
@@ -158,6 +163,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                             # Store the data
                             tweetid_timestamp[tweet_id] = timestamp_str
                             tweetid_max_rts[tweet_id] = rt_count
+                            tweetid_url[tweet_id] = tweet_url
                             userid_tweetids[user_id].add(tweet_id)
                             userid_username[user_id] = username
 
@@ -171,6 +177,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                         ).timestamp()
                         if timestamp >= earliest_date_tstamp:
                             tweet_id = tweet.quote_object.get_post_ID()
+                            tweet_url = tweet.quote_object.get_link_to_post()
                             user_id = tweet.quote_object.get_user_ID()
                             username = tweet.quote_object.get_user_handle()
 
@@ -182,6 +189,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                             # Store the data
                             tweetid_timestamp[tweet_id] = timestamp_str
                             tweetid_max_rts[tweet_id] = rt_count
+                            tweetid_url[tweet_id] = tweet_url
                             userid_tweetids[user_id].add(tweet_id)
                             userid_username[user_id] = username
 
@@ -195,6 +203,7 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
             dict(userid_tweetids),
             userid_username,
             tweetid_timestamp,
+            tweetid_url,
         )
 
     # Raise this error if something weird happens loading the data
@@ -207,13 +216,13 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
     script_name = os.path.basename(__file__)
-    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
+    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
     logger.info("-" * 50)
     logger.info(f"Begin script: {__file__}")
 
     # Parse input flags
     args = parse_cl_args_fib(SCRIPT_PURPOSE, logger)
-    data_dir = args.data
+    data_dir = args.data_dir
     output_dir = args.out_dir
     month_calculated = args.month_calculated
     num_months = int(args.num_months)
@@ -239,6 +248,7 @@ if __name__ == "__main__":
         userid_postids,
         userid_username,
         postid_timestamp,
+        tweetid_url,
     ) = extract_data_from_files(data_files, earliest_date_tstamp)
 
     logger.info("Creating output dataframes...")
@@ -257,7 +267,11 @@ if __name__ == "__main__":
     logger.info(f"\t- Type of spreaders to select: {SPREADER_TYPE}")
     top_spreaders = get_top_spreaders(fib_frame, NUM_SPREADERS, SPREADER_TYPE)
     top_spreader_df = create_top_spreader_df(
-        top_spreaders, userid_postids, postid_num_reshares, postid_timestamp
+        top_spreaders,
+        userid_postids,
+        postid_num_reshares,
+        postid_timestamp,
+        tweetid_url,
     )
 
     fib_frame = fib_frame.sort_values("fib_index", ascending=False).reset_index(
