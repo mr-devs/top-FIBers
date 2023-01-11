@@ -186,7 +186,7 @@ def get_top_spreaders(fib_frame, num, rank_type=None):
 
 
 def create_top_spreader_df(
-    top_spreaders, userid_postids, postid_num_reshares, postid_timestamp
+    top_spreaders, userid_postids, postid_num_reshares, postid_timestamp, postid_url
 ):
     """
     Create a dataframe containing all posts sent by the top spreaders.
@@ -197,6 +197,7 @@ def create_top_spreader_df(
     - userid_postids (dict) : maps user IDs to a set of (str) post IDs
     - postid_num_reshares (dict) : maps post IDs to number of reshares (int)
     - postid_timestamp (dict) : maps post IDs to (str) timestamps
+    - postid_url (dict) : maps post IDs to (str) post URLs
 
     Returns:
     -----------
@@ -205,6 +206,7 @@ def create_top_spreader_df(
         - post_id (str) : unique ID of the post
         - num_reshares (int) : the number of reshares of `post_id`
         - timestamp (str) : timestamp string
+        - post_url (str) : full URL to the post
 
     Exceptions:
     -----------
@@ -223,13 +225,14 @@ def create_top_spreader_df(
         top_spreader_records = []
         for user_id in top_spreaders:
             user_postids = userid_postids[user_id]
-            for tid in user_postids:
+            for post_id in user_postids:
                 top_spreader_records.append(
                     {
                         "user_id": user_id,
-                        "post_id": tid,
-                        "num_reshares": postid_num_reshares[tid],
-                        "timestamp": postid_timestamp[tid],
+                        "post_id": post_id,
+                        "num_reshares": postid_num_reshares[post_id],
+                        "timestamp": postid_timestamp[post_id],
+                        "post_url": postid_url[post_id],
                     }
                 )
         top_spreaders_df = pd.DataFrame.from_records(top_spreader_records)
