@@ -104,7 +104,7 @@ def parse_cl_args_fib(script_purpose="", logger=None):
         "-d",
         "--data-dir",
         metavar="Data Directory",
-        help="Full path to the directory containing files to use in FIB calculations",
+        help="Full path to the directory containing symbolic links to data files used in FIB calculations",
         required=True,
     )
     msg = (
