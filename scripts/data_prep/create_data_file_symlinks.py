@@ -23,7 +23,7 @@ from top_fibers_pkg.utils import parse_cl_args_symlinks, get_logger
 from top_fibers_pkg.dates import get_earliest_date
 
 SCRIPT_PURPOSE = "Create symbolic links for the period specified"
-BASE_DIR = "/home/data/apps/topfibers/repo"
+REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "data_file_symlinks.log"
 
@@ -104,11 +104,11 @@ def create_sym_links(file_tuples):
 
 
 if __name__ == "__main__":
-    if not (os.getcwd() == BASE_DIR):
+    if not (os.getcwd() == REPO_ROOT):
         sys.exit(
             "ALL SCRIPTS MUST BE RUN FROM THE REPO ROOT!!\n"
             f"\tCurrent directory: {os.getcwd()}\n"
-            f"\tRepo root        : {BASE_DIR}\n"
+            f"\tRepo root        : {REPO_ROOT}\n"
         )
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
