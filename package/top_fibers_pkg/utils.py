@@ -33,15 +33,21 @@ def parse_cl_args_symlinks(script_purpose="", logger=None):
     parser = argparse.ArgumentParser(description=script_purpose)
 
     # Add long and short argument
+    msg = (
+        "Data directory that contains the raw data files for a specific platform. "
+        "E.g.: /home/data/apps/topfibers/repo/data/raw/twitter"
+    )
     parser.add_argument(
         "-d",
         "--data",
         metavar="Data Directory",
-        help="Data directory that contains the raw data files",
+        help=msg,
         required=True,
     )
     msg = (
         "Full path to the output directory. "
+        "This should be the symbolics link directory followed by the platform. "
+        "E.g.: dir/to/symbolic_links/facebook. "
         "The input for --month-calculated will be created as a subdirectory of "
         "this directory and data will be saved there."
     )
@@ -63,7 +69,7 @@ def parse_cl_args_symlinks(script_purpose="", logger=None):
         "-n",
         "--num-months",
         metavar="Number of months considered",
-        help="The number of months to consider (e.g., input 3 to consider three months)",
+        help="The number of months to consider (e.g., input 3 to create symbolic links for three months)",
         required=True,
     )
 
