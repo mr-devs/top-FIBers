@@ -38,6 +38,7 @@ import glob
 import gzip
 import json
 import os
+import sys
 
 from collections import defaultdict
 from top_fibers_pkg.data_model import FbIgPost
@@ -51,7 +52,8 @@ from top_fibers_pkg.fib_helpers import (
     create_top_spreader_df,
 )
 
-LOG_DIR = "/data_volume/top-fibers/logs"
+REPO_ROOT = "/home/data/apps/topfibers/repo"
+LOG_DIR = "./logs"
 LOG_FNAME = "calc_facebook_fib_indices.log"
 SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
@@ -152,6 +154,12 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 # Execute the program
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if __name__ == "__main__":
+    if not (os.getcwd() == REPO_ROOT):
+        sys.exit(
+            "ALL SCRIPTS MUST BE RUN FROM THE REPO ROOT!!\n"
+            f"\tCurrent directory: {os.getcwd()}\n"
+            f"\tRepo root        : {REPO_ROOT}\n"
+        )
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
     logger.info("-" * 50)

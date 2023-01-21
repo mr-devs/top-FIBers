@@ -21,6 +21,7 @@ import datetime
 import glob
 import gzip
 import os
+import sys
 
 from top_fibers_pkg.utils import get_logger
 
@@ -30,7 +31,8 @@ SCRIPT_PURPOSE = (
     "Count the number of posts that we have in all "
     "raw files contained in the data dir provided"
 )
-LOG_DIR = "/data_volume/top-fibers/logs"
+REPO_ROOT = "/home/data/apps/topfibers/repo"
+LOG_DIR = "./logs"
 LOG_FNAME = "post_count.log"
 
 
@@ -90,6 +92,12 @@ def parse_cl_args(script_purpose="", logger=None):
 
 
 if __name__ == "__main__":
+    if not (os.getcwd() == REPO_ROOT):
+        sys.exit(
+            "ALL SCRIPTS MUST BE RUN FROM THE REPO ROOT!!\n"
+            f"\tCurrent directory: {os.getcwd()}\n"
+            f"\tRepo root        : {REPO_ROOT}\n"
+        )
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
     logger.info("-" * 50)
