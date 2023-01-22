@@ -98,7 +98,7 @@ if __name__ == "__main__":
             f"\tRepo root        : {REPO_ROOT}\n"
         )
     script_name = os.path.basename(__file__)
-    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
+    logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
     logger.info("-" * 50)
     logger.info(f"Begin script: {__file__}")
 
