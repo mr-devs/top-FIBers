@@ -106,17 +106,22 @@ def parse_cl_args_fib(script_purpose="", logger=None):
     parser = argparse.ArgumentParser(description=script_purpose)
 
     # Add long and short argument
+    msg = (
+        "Full path to the directory containing symbolic links to data files "
+        "used in FIB calculations. E.g.: /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_02"
+    )
     parser.add_argument(
         "-d",
         "--data-dir",
         metavar="Data Directory",
-        help="Full path to the directory containing symbolic links to data files used in FIB calculations",
+        help=msg,
         required=True,
     )
     msg = (
         "Full path to the output directory. "
         "The input for --month-calculated will be created as a subdirectory of "
-        "this directory and data will be saved there."
+        "this directory and data will be saved there. "
+        "E.g.: /home/data/apps/topfibers/repo/data/derived/fib_results/twitter"
     )
     parser.add_argument(
         "-o",
