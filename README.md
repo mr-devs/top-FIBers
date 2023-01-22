@@ -30,7 +30,7 @@ python scripts/data_prep/create_data_file_symlinks.py -d /home/data/apps/topfibe
 
 3. **Generate FIB files**
 
-Then we create the output files based on the FIB index. Note that there are two different scripts for each platform.
+Then we create the output files based on the FIB index. Note that there are two different scripts, one for each platform.
 
 ```shell
 # For Twitter
