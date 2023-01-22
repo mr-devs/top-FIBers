@@ -29,7 +29,8 @@ import pandas as pd
 
 SCRIPT_PURPOSE = (
     "Count the number of posts that we have in all "
-    "raw files contained in the data dir provided"
+    "raw files contained in the data dir provided. "
+    "Previously counted files are skipped."
 )
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
@@ -38,9 +39,7 @@ LOG_FNAME = "post_count.log"
 
 def parse_cl_args(script_purpose="", logger=None):
     """
-    Read command line arguments for the script that downloads Facebook posts from
-    CrowdTangle.
-        - top-fibers/data_collection/crowdtangle_dl_fb_links.py
+    Read command line arguments.
 
     Parameters:
     --------------
