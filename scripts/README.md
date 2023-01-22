@@ -1,8 +1,4 @@
 
 # `scripts/`
 
-This directory contains any scripts utilized in this repository.
-
-## Files:
-- `calc_fib_indices.py` : this script takes in Moe's Tavern gzip compressed new-line delimited tweet files and returns a .parquet file containing a `pandas` dataframe. This frame will contain all users from the input tweet files and their corresponding FIB-indices. See script docstring for full details.
-    - Run `python3 calc_fib_indices.py -h` for help on the script inputs
+This directory contains all scripts utilized in this repository. Please try and organize them by task into the existing subdirectories.

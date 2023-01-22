@@ -1,3 +1,3 @@
 # `environments/`
 
-Different environment files are saved here. Please see the README.md file in the root of this repository for the details.
+Different environment files are saved here. Please see the official documentation for details on how to create the environment and **where to save the environment's code**.
