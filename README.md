@@ -11,7 +11,7 @@ Code to find and rank the top superspreaders of misinformation on Twitter using 
 
 > IMPORTANT:
 > 1. **Must be in the repo root (`cd /home/data/apps/topfibers/repo`) or scripts will break.**
-> 2. **Most scripts below will require slight changes to capture the proper time period (YYYY_MM).**
+> 2. **Most commands below will require slight changes to capture the proper time period (YYYY_MM).**
 
 1. **Move raw Twitter data to proper place**
 
