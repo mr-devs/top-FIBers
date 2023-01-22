@@ -80,7 +80,7 @@ def parse_cl_args(script_purpose="", logger=None):
         "-p",
         "--platform",
         metavar="Platform",
-        help="The platform posts you want to count",
+        help="The platform posts you want to count. Options: [twitter, facebook]",
         choices=["twitter", "facebook"],
         required=True,
     )
