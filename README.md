@@ -47,6 +47,6 @@ python scripts/data_processing/calc_crowdtangle_fib_indices.py -d /home/data/app
 ```
 
 > Note
-> 1. The `YYYY_MM` data should be the same for the `-m` flag as well as the last dir of the `-d` input.
+> 1. The `YYYY_MM` date should be the same for the `-m` flag as well as the last dir of the `-d` input.
 
 
