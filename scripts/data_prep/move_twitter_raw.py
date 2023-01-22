@@ -19,6 +19,7 @@ Outputs:
 import datetime
 import os
 import shutil
+import sys
 
 import pandas as pd
 
@@ -32,9 +33,17 @@ LOG_FNAME = "move_twitter_raw.log"
 OUTPUT_DIR = "/home/data/apps/topfibers/repo/data/raw/twitter"
 OUTPUT_SUFFIX = "__tweets_w_links.jsonl.gzip"
 RAW_DATA_DIR = "/home/data/apps/topfibers/moe_twitter_data"
+REPO_ROOT = "/home/data/apps/topfibers/repo"
 
 
 if __name__ == "__main__":
+    if not (os.getcwd() == REPO_ROOT):
+        sys.exit(
+            "ALL SCRIPTS MUST BE RUN FROM THE REPO ROOT!!\n"
+            f"\tCurrent directory: {os.getcwd()}\n"
+            f"\tRepo root        : {REPO_ROOT}\n"
+        )
+
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
     logger.info("-" * 50)
