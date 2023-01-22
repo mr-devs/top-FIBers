@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 # Manual OSoMe additions
+logs/
 derived/
 raw/
 symbolic_links/
