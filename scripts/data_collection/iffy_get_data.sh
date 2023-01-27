@@ -7,12 +7,12 @@ tavern_job="osome_swap/moe/jobs/top_fibers_data/"
 KEY=${HOME}/.ssh/id_rsa_moe
 
 #check variables
-echo "Start: " ${year_month}-01  "End: " ${end_of_last_month} "updating iffy"
-echo "Fibers Home: " ${fiber_home}  
-echo "Tavern Dir: " ${tavern_job}  
-echo "Moe Key: "${KEY}
-echo "rsync -at ${fiber_home}iffy_list truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}/"
-echo "rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job} ${fiber_home}moe_twitter_data/${year_month}"
+#echo "Start: " ${year_month}-01  "End: " ${end_of_last_month} "updating iffy"
+#echo "Fibers Home: " ${fiber_home}  
+#echo "Tavern Dir: " ${tavern_job}  
+#echo "Moe Key: "${KEY}
+#echo "rsync -at ${fiber_home}iffy_list truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}/"
+#echo "rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month}/ ${fiber_home}moe_twitter_data/"
 
 # get latest iffy list
 ${fiber_home}repo/environments/env_code/bin/python /u/truthy/cronjobs/update_latestmonth_topfibers/iffy_update.py "${fiber_home}iffy_list"
@@ -24,4 +24,4 @@ rsync -at ${fiber_home}iffy_list truthy@lisa.luddy.indiana.edu:/home/data/${tave
 ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "/home/appuser/truthy-cmd.sh get-tweets-with-meme -memes "/mnt/${tavern_job}iffy_list" -tstart "${year_month}-01" -tend "${end_of_last_month}" -tid false -ntweets 1000000 -outdir /mnt/${tavern_job}${year_month}/ -torf false"
 
 # copy results to Lenny:topfibers 
-rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job} ${fiber_home}moe_twitter_data/${year_month}
+rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month}/ ${fiber_home}moe_twitter_data/
