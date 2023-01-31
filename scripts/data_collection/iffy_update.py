@@ -67,7 +67,9 @@ def parse_cl_args(script_purpose="", logger=None):
 
 
 def get_iffy():
-    """grab the latest version of iffy list and save to local"""
+    """Grab the latest version of iffy list and save to local"""
+    logger.info("Attempting to pull new iffy news domains list...")
+
     url = "https://iffynews.page.link/sheet"
     sheet_name = "Iffy-news"
     try:
@@ -79,6 +81,7 @@ def get_iffy():
         list_of_url = [f"{url}*\n" for url in df.URL.tolist()]
     except Exception as e:
         logger.exception(f"Problem getting the new iffy list!\n\n{e}")
+    logger.info("Success.")
     return list_of_url
 
 
@@ -99,5 +102,7 @@ if __name__ == "__main__":
     iffy_file = args.file
 
     new_iffy = get_iffy()
+    logger.info("Writing new domains list to the disk...")
     with open(iffy_file, "w+") as outfile:
         outfile.writelines(new_iffy)
+    logger.info("~~~ Script complete. ~~~")
