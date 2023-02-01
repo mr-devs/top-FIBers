@@ -36,7 +36,7 @@ from top_fibers_pkg.crowdtangle_helpers import ct_get_search_posts
 from top_fibers_pkg.utils import parse_cl_args_ct_dl, load_lines, get_logger
 
 SCRIPT_PURPOSE = "Download Facebook posts from CrowdTangle based on a list of links."
-LOG_DIR = "/data_volume/top-fibers/logs"
+LOG_DIR = "./logs"
 LOG_FNAME = "top_fibers_fb_link_dl.log"
 
 NUMBER_OF_POSTS_PER_CALL = 10_000
