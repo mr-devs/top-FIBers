@@ -27,4 +27,4 @@ SHELL=/bin/bash
 #####################################################################
 # Twitter Data Collection
 # grab past month twitter data with new iffy list
-0 8 2 * * /home/data/apps/topfibers/repo/scripts/data_collection/iffy_get_data.sh
+0 16 1 * * cd /home/data/apps/topfibers/repo && scripts/data_collection/iffy_get_data.sh > logs/iffy_get_data.out 2>&1 &
