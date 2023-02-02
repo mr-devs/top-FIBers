@@ -1,14 +1,14 @@
 """
 Purpose:
-    Update the existing Iffy news list of low-credibility domains with the latest.
+    Download the latest Iffy news list of low-credibility domains.
     Iffy News Ref: https://iffy.news/
     File Ref: https://iffynews.page.link/sheet
 
 Inputs:
-    Full path to the existing iffy news file. See argparse function below.
+    Relative path to the new iffy news file. See argparse function below.
 
 Outputs:
-    Overwrites the previous iffy news file.
+    Saves a new iffy news file.
 
 Authors: Nick Liu & Matthew DeVerna
 """
@@ -56,7 +56,7 @@ def parse_cl_args(script_purpose="", logger=None):
         "-f",
         "--file",
         metavar="Iffy File",
-        help="Full path to the iffy news file",
+        help="Relative path to the iffy news file",
         required=True,
     )
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     # Parse input flags
     args = parse_cl_args(SCRIPT_PURPOSE, logger)
-    iffy_file = args.file
+    iffy_file = os.path.join(REPO_ROOT, args.file)
 
     new_iffy = get_iffy()
     logger.info("Writing new domains list to the disk...")
