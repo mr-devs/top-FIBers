@@ -189,11 +189,15 @@ def parse_cl_args_ct_dl(script_purpose="", logger=None):
         help=msg,
         required=True,
     )
+    msg = (
+        "Directory where you'd like to save the output data. E.g.: "
+        "/home/data/apps/topfibers/repo/data/raw/facebook"
+    )
     parser.add_argument(
         "-o",
         "--out-dir",
         metavar="Output dir",
-        help="Directory where you'd like to save the output data",
+        help=msg,
         required=True,
     )
     parser.add_argument(
