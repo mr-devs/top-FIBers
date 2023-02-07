@@ -134,7 +134,7 @@ def parse_cl_args_fib(script_purpose="", logger=None):
         "-m",
         "--month-calculated",
         metavar="Month calculated",
-        help="The month for which you'd like to calculate FIB indices (YYYY-MM)",
+        help="The month for which you'd like to calculate FIB indices (YYYY_MM)",
         required=True,
     )
     parser.add_argument(
