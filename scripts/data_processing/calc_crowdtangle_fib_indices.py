@@ -123,6 +123,11 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
                         continue
                     user_id = post_obj.get_user_ID()
                     username = post_obj.get_user_handle()
+
+                    # This handles certain types of accounts like groups and pages that
+                    # do not have "handles" (or don't provide one) but instead have "names"
+                    if username in [None, ""]:
+                        username = post_obj.get_account_name()
                     reshare_count = post_obj.get_reshare_count()
                     if reshare_count is None:
                         reshare_count = 0

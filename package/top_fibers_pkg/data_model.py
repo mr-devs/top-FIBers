@@ -318,6 +318,13 @@ class FbIgPost(PostBase):
         Return the account handle of the user (str)
         """
         return self.get_value(["account", "handle"])
+    
+    def get_account_name(self):
+        """
+        Some accounts do not have "handles" and instead have "names." For example,
+        if "accountType" is facebook_page or facebook_group.
+        """
+        return self.get_value(["account", "name"])
 
     def get_link_to_author(self):
         """

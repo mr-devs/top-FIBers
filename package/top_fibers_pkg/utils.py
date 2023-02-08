@@ -134,7 +134,7 @@ def parse_cl_args_fib(script_purpose="", logger=None):
         "-m",
         "--month-calculated",
         metavar="Month calculated",
-        help="The month for which you'd like to calculate FIB indices (YYYY-MM)",
+        help="The month for which you'd like to calculate FIB indices (YYYY_MM)",
         required=True,
     )
     parser.add_argument(
@@ -189,11 +189,15 @@ def parse_cl_args_ct_dl(script_purpose="", logger=None):
         help=msg,
         required=True,
     )
+    msg = (
+        "Directory where you'd like to save the output data. E.g.: "
+        "/home/data/apps/topfibers/repo/data/raw/facebook"
+    )
     parser.add_argument(
         "-o",
         "--out-dir",
         metavar="Output dir",
-        help="Directory where you'd like to save the output data",
+        help=msg,
         required=True,
     )
     parser.add_argument(
