@@ -44,8 +44,14 @@ environments/env_code/bin/python scripts/data_collection/iffy_update.py -f "data
 # copy to Lisa-Moe shared drive
 rsync -at data/iffy_files/${today}${iffy_filename} truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${today}${iffy_filename}
 
+#clean up tavern directory if exists
+ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "if [ -d "/mnt/${tavern_job}${year_month}" ]; then rm -Rf /mnt/${tavern_job}${year_month}; fi"
+
 # create a tavern job
 ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "/home/appuser/truthy-cmd.sh get-tweets-with-meme -memes "/mnt/${tavern_job}${today}${iffy_filename}" -tstart "${year_month}-01" -tend "${end_of_last_month}" -tid false -ntweets 1000000 -outdir /mnt/${tavern_job}${year_month}/ -torf false"
+
+#clean up raw teweet directory if exists
+if [ -d "${fiber_home}moe_twitter_data/${year_month}" ]; then rm -Rf ${fiber_home}moe_twitter_data/${year_month}; fi
 
 # copy results to Lenny:topfibers 
 rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month} ${fiber_home}moe_twitter_data/
