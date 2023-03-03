@@ -13,6 +13,7 @@ Outputs:
 Authors: Nick Liu & Matthew DeVerna
 """
 import argparse
+import datetime
 import os
 import sys
 
@@ -53,10 +54,10 @@ def parse_cl_args(script_purpose="", logger=None):
 
     # Add long and short argument
     parser.add_argument(
-        "-f",
-        "--file",
-        metavar="Iffy File",
-        help="Relative path to the iffy news file",
+        "-d",
+        "--directory",
+        metavar="Directory",
+        help="Full path to the directory where you want to save the NEW iffy file",
         required=True,
     )
 
@@ -99,10 +100,15 @@ if __name__ == "__main__":
 
     # Parse input flags
     args = parse_cl_args(SCRIPT_PURPOSE, logger)
-    iffy_file = os.path.join(REPO_ROOT, args.file)
+    iffy_dir = os.path.join(REPO_ROOT, args.directory)
 
     new_iffy = get_iffy()
     logger.info("Writing new domains list to the disk...")
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    iffy_file = os.path.join(
+        iffy_dir, 
+        f"{today}__iffy_list.txt"
+    )
     with open(iffy_file, "w+") as outfile:
         outfile.writelines(new_iffy)
     logger.info("~~~ Script complete. ~~~")
