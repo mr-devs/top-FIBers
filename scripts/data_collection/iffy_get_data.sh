@@ -38,10 +38,7 @@ iffy_filename="iffy_list.txt"
 # go to repo root
 cd ${fiber_home}repo
 
-# get latest iffy list
-environments/env_code/bin/python scripts/data_collection/iffy_update.py -d "data/iffy_files"
-
-# copy to Lisa-Moe shared drive
+# copy to Lisa-Moe shared drive (will already be saved there by the master script)
 rsync -at data/iffy_files/${today}${iffy_filename} truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${today}${iffy_filename}
 
 #clean up tavern directory if exists
