@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 def get_fib_index_conf():
     try:
-        config_file_path = "conf/fibindex.config"
+        config_file_path = os.path.abspath(os.path.join(os.getcwd(), "conf/fibindex.config"))
         logger.info('FibIndex conf path : %s', config_file_path)
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_path)

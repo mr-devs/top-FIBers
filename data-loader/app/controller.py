@@ -50,8 +50,7 @@ def read_files(read_dir, platform, selected_month):
                     local_dir = os.path.join(os.path.join(read_dir, selected_month + '/'), file)
                     if FIB_INDICES in file:
                         """
-                        This is used the fib_indices file for selected month.
-                            Based on the selected platform(facebook or twitter) this will add the data to fib_indices table.
+                        This is used the fib_indices file for selected month. Based on the selected platform(facebook or twitter) this will add the data to fib_indices table.
                         """
                         logger.info("Loading fib indices file for the {}", selected_month)
                         df_fib_indices = pd.read_parquet(local_dir)
@@ -64,7 +63,7 @@ def read_files(read_dir, platform, selected_month):
                                 traceback.print_tb(err.__traceback__)
                                 logger.error("Error in adding data to fib indices")
                     elif TOP_SPREADERS in file:
-                         """
+                        """
                         This is used the top spreader file for selected month.
                             Based on the selected platform(facebook or twitter) this will add the data to posts table and reshares table.
                         """

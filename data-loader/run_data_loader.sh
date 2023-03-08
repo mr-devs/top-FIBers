@@ -1,5 +1,26 @@
 #!/bin/bash
 
+# Purpose:
+#   This is a script that make connection between the LISA through lenny and access the database in there.
+#
+# Inputs:
+#   None
+#
+# Configs:
+#   python        :  This will get the conda environment path
+#   loader_home   :  Add the data-loader path
+#
+# Output:
+#   This will make connection with the LISA and insert the data in the tables. 
+#
+# How to call:
+#   ```
+#   cd /home/data/apps/topfibers/repo/data-loader/run_data_loader.sh
+#   ```
+#
+#
+# Author: Pasan Kamburugamuwa
+
 python="/home/data/apps/topfibers/repo/environments/env_code/bin/python"
 
 loader_home="/home/data/apps/topfibers/repo/data-loader"

@@ -4,10 +4,10 @@ import re
 import os
 import datetime
 
-facebook_data_root = "../data/derived/fib_results/facebook/"
-twitter_data_root = "../data/derived/fib_results/twitter/"
+facebook_data_root = os.path.abspath(os.path.join(os.getcwd(), "../data/derived/fib_results/facebook/"))
+twitter_data_root = os.path.abspath(os.path.join(os.getcwd(),"../data/derived/fib_results/twitter/"))
 PLATFORMS = ["Facebook", "Twitter"]
-LOAD_PAST_MONTH_DATA = ['2023_01']
+LOAD_PAST_MONTH_DATA = ['2022_01']
 
 def load_current_data():
     """

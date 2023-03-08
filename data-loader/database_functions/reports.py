@@ -9,7 +9,7 @@ Outputs:
 
 Authors: Pasan Kamburugamuwa
 """
-`
+
 import logging
 from flask import Flask
 from library import backend_util
