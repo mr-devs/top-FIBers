@@ -1,3 +1,15 @@
+"""
+Purpose:
+    This script used to add the data to reports table
+Inputs:
+    - The data need to be passed here are,
+       |- date, report_name, platform
+Outputs:
+    The report id will be passed.
+
+Authors: Pasan Kamburugamuwa
+"""
+`
 import logging
 from flask import Flask
 from library import backend_util

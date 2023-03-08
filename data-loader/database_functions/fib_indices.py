@@ -1,3 +1,16 @@
+"""
+Purpose:
+    This script used to add the data to fib_indices table
+Inputs:
+    - The data need to be passed here are,
+       |- user_id, report_id, fib_index, total_reshares, username, platform
+Outputs:
+    The id will be passed.
+
+Authors: Pasan Kamburugamuwa
+"""
+
+
 import logging
 from flask import Flask
 from library import backend_util

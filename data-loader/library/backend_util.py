@@ -1,3 +1,15 @@
+"""
+Purpose:
+    This script used to read the data from /home/data/apps/topfibers/repo/data-loader/conf/fibindex.config
+    and pass these data to other modules in the data-loader
+Inputs:
+    - No inputs to this file
+Outputs:
+    The database configurations will be passed.
+
+Authors: Pasan Kamburugamuwa
+"""
+
 import os
 import configparser
 import logging

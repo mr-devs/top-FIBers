@@ -1,3 +1,15 @@
+"""
+Purpose:
+    This script used to add the data to posts table
+Inputs:
+    - The data need to be passed here are,
+       |- post_id, user_id, platform, timestamp, url
+Outputs:
+    The post id will be passed.
+
+Authors: Pasan Kamburugamuwa
+"""
+
 import logging
 from flask import Flask
 from library import backend_util

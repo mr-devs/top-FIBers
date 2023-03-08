@@ -1,3 +1,15 @@
+"""
+Purpose:
+    This script used to add the data to reshares table
+Inputs:
+    - The data need to be passed here for add_reshares,
+       |- post_id, repord_id, platform, num_shares
+Outputs:
+    The post_id id will be passed.
+
+Authors: Pasan Kamburugamuwa
+"""
+
 import logging
 from flask import Flask
 from library import backend_util
