@@ -1,28 +1,28 @@
 #!/bin/bash
 
 # Purpose:
-#   This is a script that make connection between the LISA through lenny and access the database in there.
+#    This script makes a connection to LISA and then runs the data-loader/server.py
+#    script to send new data to the database. Will be run each month by the
+#    scripts/monthly_master_script.sh script
 #
 # Inputs:
-#   None
+#    None
 #
 # Configs:
-#   python        :  This will get the conda environment path
-#   loader_home   :  Add the data-loader path
+#    python     : This will get the conda environment path
+#    loader_home: Add the data-loader path
 #
 # Output:
-#   This will make connection with the LISA and insert the data in the tables. 
+#    None 
 #
 # How to call:
-#   ```
-#   cd /home/data/apps/topfibers/repo/data-loader/run_data_loader.sh
-#   ```
-#
+#    ```
+#    bash /home/data/apps/topfibers/repo/data-loader/run_data_loader.sh
+#    ```
 #
 # Author: Pasan Kamburugamuwa
 
 python="/home/data/apps/topfibers/repo/environments/env_code/bin/python"
-
 loader_home="/home/data/apps/topfibers/repo/data-loader"
 
 # Create SSH tunnel
@@ -36,4 +36,3 @@ ${python} ${loader_home}/server.py
 
 # Kill SSH tunnel process
 kill $tunnel_pid
-

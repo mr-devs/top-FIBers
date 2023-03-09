@@ -1,81 +1,72 @@
 """
 Purpose:
-    This script fetch the current month data and feed the data in to database
+    The main python script that sends (i.e., "serves") data to the database.
+    By default, the script will send data for the current month. If you would like
+    to send older data, you must manually update the MONTHS variable with 
+    the dates you would like to update. See comments below for examples.
+
 Inputs:
-    *No inputs to the function
-    *If you need to run for the past months which is missed. use the LOAD_PAST_MONTH_DATA array
-    *This script will grab the current year_month and execute it.
+    None
+
 Output:
-    *No output available, this will add data to database.
-Author: Pasan Kamburugamuwa
+    None
+
+Author: Pasan Kamburugamuwa & Matthew DeVerna
 """
-
-from flask import Flask
-from app import controller
-import re
-import os
 import datetime
-from library.utils import get_logger
+import os
 
-#get the absolute path of the facebook dir
-facebook_data_root = os.path.abspath(os.path.join(os.getcwd(), "../data/derived/fib_results/facebook/"))
-#get the abosolute path of the twitter dir
-twitter_data_root = os.path.abspath(os.path.join(os.getcwd(),"../data/derived/fib_results/twitter/"))
+# Only used if updating all months
+import pandas as pd
+
+from app import controller
+from top_fibers_pkg.utils import get_logger
+
+facebook_data_path = "/home/data/apps/topfibers/repo/data/derived/fib_results/facebook"
+twitter_data_path = "/home/data/apps/topfibers/repo/data/derived/fib_results/twitter"
 PLATFORMS = ["Facebook", "Twitter"]
-#to load the past months data(2022_01, 2022_02, 2022_04 ..) use this array
-LOAD_PAST_MONTH_DATA = ['2022_01']
+LOG_DIR = "/home/data/apps/topfibers/repo/data/logs"
+LOG_FNAME = "database_server.log"
 
-LOG_DIR = os.path.abspath(os.path.join(os.getcwd(), "../logs"))
-LOG_FNAME = "data_loader_script.log"
+### Use commented out only one of the MONTHS rows to dicate the months for which
+### data is sent to the database. Default = current month
+# --- All months ---
+# MONTHS = [dt.strftime("%Y_%m") for dt in pd.date_range("2022-01", "2023-01", freq="MS")]
+# --- Specific months ---
+# MONTHS = ["2022_10", "2023_01", "2023_03"]
+# --- Current month (should be the default) ---
+MONTHS = [datetime.datetime.now().strftime("%Y_%m")]
 
-def load_current_month_data():
-    """
-    Load each platform and read the files.
-    """
-    logger.info("Begin load current month data")
-    for platform in PLATFORMS:
-        if platform == 'Facebook':
-            read_dir = facebook_data_root
-        else:
-            read_dir = twitter_data_root
-        try:
-           #get the current year_month
-           current_year_month = datetime.datetime.now().strftime("%Y_%m")
-           print(current_year_month)
-           #call the read_file func in controller to read the file
-           controller.read_files(read_dir, platform, current_year_month)
-           logger.info(f"Successfully feed the data to the database on month of : {current_year_month}")
-           logger.info("--------------------------------------------")
-        except Exception:
-           logger.exception(f"Error in adding data to the database on month : {current_year_month}")
-           raise Exception(e)
 
-def load_past_months_data():
+def update_database():
     """
-    Load each platform and read the files for past months. This function is
-    used only once.
+    Update the Top FIBers database with the controller.add_data() function.
     """
     logger.info("Begin load past month data")
-    for selected_month in LOAD_PAST_MONTH_DATA:
+    for selected_month in MONTHS:
         for platform in PLATFORMS:
-            if platform == 'Facebook':
-                read_dir = facebook_data_root
-            else:
-                read_dir = twitter_data_root
+            read_dir = (
+                facebook_data_path if platform == "Facebook" else twitter_data_path
+            )
             try:
-                #read the past month data
-                controller.read_files(read_dir, platform, selected_month)
-                logger.info(f"Successfully feed the data to the database on month of : {current_year_month}")
-                logger.info("--------------------------------------------")
+                # Read data for the specified month
+                logger.info(f"Adding data to database for month: {selected_month}...")
+                controller.add_data(read_dir, platform, selected_month)
+                logger.info("Success.")
+                logger.info("-" * 50)
+
             except Exception as e:
-                logger.exception(f"Problem with adding data to the database with month: {selected_month}")
+                logger.exception(f"Problem sending data!")
                 raise Exception(e)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
     logger.info("-" * 50)
     logger.info(f"Begin script: {__file__}")
 
-    load_past_months_data()
+    update_database()
 
+    logger.info(f"Successfully updated database.")
+    logger.info("-" * 50)
