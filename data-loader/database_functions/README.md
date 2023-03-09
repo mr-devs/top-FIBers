@@ -1,19 +1,12 @@
-# database-functions
-This is the directory which has all the database insert, get existing data from the database for the tables reports, fib_indices, reshares and reports
+# `database-functions/`
+This directory contains all of the database functions. Each function maps to one
+of the database tables.
 
----
+- See the database schema [here](https://docs.google.com/spreadsheets/d/1gfAyLKk0VwQK1KLDgAWemWxw4wMM7_pyLtkgzAFehko/edit?usp=sharing)
+- Generate the database with the `repo/data-loader/database_script/create.sql` script
 
-1.Database Tables
-
-Used following tables to insert the data
-    
-1.reports
-2.fib_indices
-3.posts
-4.reshares
-
-2.The database_script is in here `/home/data/apps/topfibers/repo/data-loader/database_script/create.sql`
-
-
-
-
+### Contents
+- `fib_indices.py`: contains functions to add data to **fib_indices** table
+- `posts.py`: contains functions to add the data to **posts** table
+- `reports.py`: contains functions to add the data to **reports** table
+- `reshares.py`: contains functions to add the data to **reshares** table
