@@ -18,17 +18,18 @@ import logging
 import os
 import re
 import traceback
-
 import pandas as pd
 from database_functions import reports, fib_indices, posts, reshares
-
+from top_fibers_pkg.utils import get_logger
 
 FIB_INDICES = "fib_indices"
 TOP_SPREADERS = "top_spreader"
 N_ROWS = 50
 
-logger = logging.getLogger(__name__)
-
+LOG_DIR = "/home/data/apps/topfibers/repo/logs"
+LOG_FNAME = "database_server.log"
+script_name = os.path.basename(__file__)
+logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True)
 
 def add_data(read_dir, platform, selected_month):
     """
