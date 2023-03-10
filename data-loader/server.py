@@ -2,7 +2,7 @@
 Purpose:
     The main python script that sends (i.e., "serves") data to the database.
     By default, the script will send data for the current month. If you would like
-    to send older data, you must manually update the MONTHS variable with 
+    to send older data, you must manually update the MONTHS variable with
     the dates you would like to update. See comments below for examples.
 
 Inputs:
@@ -36,7 +36,6 @@ LOG_FNAME = "database_server.log"
 # MONTHS = ["2022_10", "2023_01", "2023_03"]
 # --- Current month (should be the default) ---
 MONTHS = [datetime.datetime.now().strftime("%Y_%m")]
-
 
 def update_database():
     """

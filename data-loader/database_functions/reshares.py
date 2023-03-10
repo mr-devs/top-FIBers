@@ -46,23 +46,3 @@ def add_reshares(post_id, report_id, platform, num_shares):
         except Exception as ex:
             raise Exception(ex)
 
-
-def get_all_reshares():
-    """
-    Get all data in the reshares table.
-    """
-    all_reshares = []
-    with backend_util.get_db_cursor() as cur:
-        select_query = "SELECT post_id, repord_id, platform, num_shares from reshares;"
-        cur.execute(select_query)
-        if cur.rowcount > 0:
-            all_post_details = cur.fetchall()
-            for post in all_post_details:
-                post_json = {
-                    "post_id": post[0],
-                    "repord_id": post[1],
-                    "platform": post[2],
-                    "platform": post[3],
-                }
-                all_reshares.append(post_json)
-    return all_reshares

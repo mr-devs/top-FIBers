@@ -49,7 +49,7 @@ def add_reports(date, report_name, platform):
             raise Exception(ex)
 
 
-def check_report_already_added(date, report_name, platform):
+def report_already_added(date, report_name, platform):
     """
     Check if a specific report already exists in the database
 
@@ -71,7 +71,7 @@ def check_report_already_added(date, report_name, platform):
         )
         cur.execute(select_query, (date, report_name, platform))
         if cur.rowcount > 0:
-            result = False
-        else:
             result = True
+        else:
+            result = False
         return result

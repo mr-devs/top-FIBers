@@ -48,27 +48,3 @@ def add_posts(post_id, user_id, platform, timestamp, url):
         except Exception as ex:
             raise Exception(ex)
 
-
-def get_all_posts():
-    """
-    Get all data in the posts table.
-    """
-    all_posts = []
-    with backend_util.get_db_cursor() as cur:
-        select_query = (
-            "SELECT id, post_id, user_id, platform, timestamp, url from posts;"
-        )
-        cur.execute(select_query)
-        if cur.rowcount > 0:
-            all_post_details = cur.fetchall()
-            for post in all_post_details:
-                post_json = {
-                    "id": post[0],
-                    "post_id": post[1],
-                    "user_id": post[2],
-                    "platform": post[3],
-                    "timestamp": post[4],
-                    "url": post[5],
-                }
-                all_posts.append(post_json)
-    return all_posts

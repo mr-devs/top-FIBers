@@ -22,7 +22,8 @@ import traceback
 import pandas as pd
 from database_functions import reports, fib_indices, posts, reshares
 
-root_dir = "../../data/fib_results/"
+
+root_dir = "/home/data/apps/topfibers/repo/data/derived/fib_results/"
 FIB_INDICES = "fib_indices"
 TOP_SPREADERS = "top_spreader"
 N_ROWS = 50
@@ -53,7 +54,7 @@ def add_data(read_dir, platform, selected_month):
         file_date = extract_date_convert_datetime(list_dir[0])
 
         # If the report has already been added to the database for this platform, we skip
-        if reports.check_report_already_added(file_date, selected_month, platform):
+        if not reports.report_already_added(file_date, selected_month, platform):
             report_id = reports.add_reports(file_date, selected_month, platform)
 
             for file in list_dir:
