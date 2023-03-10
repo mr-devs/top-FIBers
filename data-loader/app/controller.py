@@ -23,7 +23,6 @@ import pandas as pd
 from database_functions import reports, fib_indices, posts, reshares
 
 
-root_dir = "/home/data/apps/topfibers/repo/data/derived/fib_results/"
 FIB_INDICES = "fib_indices"
 TOP_SPREADERS = "top_spreader"
 N_ROWS = 50
