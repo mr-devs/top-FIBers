@@ -25,7 +25,7 @@ from top_fibers_pkg.utils import get_logger
 facebook_data_path = "/home/data/apps/topfibers/repo/data/derived/fib_results/facebook"
 twitter_data_path = "/home/data/apps/topfibers/repo/data/derived/fib_results/twitter"
 PLATFORMS = ["Facebook", "Twitter"]
-LOG_DIR = "/home/data/apps/topfibers/repo/data/logs"
+LOG_DIR = "/home/data/apps/topfibers/repo/logs"
 LOG_FNAME = "database_server.log"
 
 ### Use commented out only one of the MONTHS rows to dicate the months for which

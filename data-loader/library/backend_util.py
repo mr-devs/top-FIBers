@@ -19,46 +19,16 @@ from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
+config_file_path = 'conf/fibindex.config'
+
 def get_fib_index_conf():
     try:
-        config_file_path = os.path.abspath(os.path.join(os.getcwd(), "conf/fibindex.config"))
-        logger.info('FibIndex conf path : %s', config_file_path)
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_path)
         return config_parser
     except FileNotFoundError as fnf_error:
         traceback.print_tb(fnf_error.__traceback__)
-        raise Exception('Unable to find the fibIndex config file')
-
-def get_flask_host():
-    try:
-        config = get_fib_index_conf()
-        flask_host = config["DEFAULT"]["FlaskHost"]
-        return flask_host
-    except Exception as exc:
-        traceback.print_tb(exc.__traceback__)
-        logger.error("Error in finding the fibIndex FlaskHost")
-        raise Exception('Unable to find the fibIndex FlaskHost')
-
-def get_flask_port():
-    try:
-        config = get_fib_index_conf()
-        flask_port = config["DEFAULT"]["FlaskPort"]
-        return flask_port
-    except Exception as exc:
-        traceback.print_tb(exc.__traceback__)
-        logger.error("Error in finding the fibIndex FlaskPort")
-        raise Exception('Unable to find the fibIndex FlaskPort')
-
-def get_flask_debug_mode():
-    try:
-        config = get_fib_index_conf()
-        flask_debug_mode = config["DEFAULT"]["DebugMode"]
-        return flask_debug_mode
-    except Exception as exc:
-        traceback.print_tb(exc.__traceback__)
-        logger.error("Error in finding the fibIndex DebugMode")
-        raise Exception('Unable to find the fibIndex DebugMode')
+        raise Exception('Unable to find the fibIndex config file'):
 
 def get_database_host():
     try:
