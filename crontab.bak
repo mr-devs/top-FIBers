@@ -25,6 +25,5 @@ MAILTO=liu472@iu.edu
 SHELL=/bin/bash
 
 #####################################################################
-# Twitter Data Collection
-# grab past month twitter data with new iffy list
-0 16 1 * * cd /home/data/apps/topfibers/repo && scripts/data_collection/iffy_get_data.sh > logs/iffy_get_data.out 2>&1 &
+# Run the monthly master bash script on the first day of each month at 6:00 am
+0 6 1 * * bash /home/data/apps/topfibers/repo/scripts/monthly_master_script.sh
