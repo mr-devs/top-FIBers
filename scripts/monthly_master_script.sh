@@ -109,6 +109,7 @@ fi
 ### Create the symbolic links
 # -------------------------------------
 # TWITTER
+# Log file saved here: UPDATE ME
 echo "$(date -Is) : Creating symbolic links for Twitter..." >> $MASTER_LOG
 $PYTHON_ENV scripts/data_prep/create_data_file_symlinks.py -d $TWITTER_DATA_DIR -o $TWITTER_SYM_DIR -m $CURR_YYYY_MM -n 3
 if [ $? -eq 0 ]; then
@@ -119,6 +120,7 @@ else
 fi
 
 # FACEBOOK
+# Log file saved here: UPDATE ME
 echo "$(date -Is) : Creating symbolic links for Facebook..." >> $MASTER_LOG
 $PYTHON_ENV scripts/data_prep/create_data_file_symlinks.py -d $FACEBOOK_DATA_DIR -o $FACEBOOK_SYM_DIR -m $CURR_YYYY_MM -n 3
 if [ $? -eq 0 ]; then
@@ -131,6 +133,7 @@ fi
 ### Calculate the FIB index stuff
 # -------------------------------------
 # TWITTER
+# Log file saved here: UPDATE ME
 echo "$(date -Is) : Calculating FIB indices for Twitter..." >> $MASTER_LOG
 $PYTHON_ENV scripts/data_processing/calc_twitter_fib_indices.py -d $TWITTER_SYM_DIR/${CURR_YYYY_MM} -o $FIB_OUT_DIR_TWITTER -m $CURR_YYYY_MM -n 3
 if [ $? -eq 0 ]; then
@@ -141,8 +144,26 @@ else
 fi
 
 # FACEBOOK
+# Log file saved here: UPDATE ME
 echo "$(date -Is) : Calculating FIB indices for Facebook..." >> $MASTER_LOG
 $PYTHON_ENV scripts/data_processing/calc_crowdtangle_fib_indices.py -d $FACEBOOK_SYM_DIR/${CURR_YYYY_MM} -o $FIB_OUT_DIR_FACBOOK -m $CURR_YYYY_MM -n 3
+if [ $? -eq 0 ]; then
+   echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
+else
+   echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
+   exit
+fi
+
+
+### Update the Twitter profile image links
+# Log file saved here: ./logs/get_latest_profile_image_links.log
+#
+# NOTE: the script updates images for FIBers found for the new month.
+#    To update links for ALL FIBers found since the inception of this project,
+#    include either "-a" or "--all-users" when executing the script below.
+# -------------------------------------
+echo "$(date -Is) : Updating new top FIBer Twitter profile image links..." >> $MASTER_LOG
+$PYTHON_ENV scripts/data_processing/get_latest_profile_image_links.py
 if [ $? -eq 0 ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
