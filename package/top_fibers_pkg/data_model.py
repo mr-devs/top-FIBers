@@ -193,6 +193,12 @@ class Tweet_v1(PostBase):
         Return the screen_name of the user (str)
         """
         return self.get_value(["user", "screen_name"])
+    
+    def get_user_profile_image_url(self):
+        """
+        Return the profile image URL for the poster of this tweet object
+        """
+        return self.get_value(["user", "profile_image_url"])
 
     def get_link_to_author(self):
         """
