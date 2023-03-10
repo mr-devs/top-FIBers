@@ -154,11 +154,10 @@ else
    exit
 fi
 
-
 ### Update the Twitter profile image links
 # Log file saved here: ./logs/get_latest_profile_image_links.log
 #
-# NOTE: the script updates images for FIBers found for the new month.
+# NOTE: The script updates images for FIBers found for the new month.
 #    To update links for ALL FIBers found since the inception of this project,
 #    include either "-a" or "--all-users" when executing the script below.
 # -------------------------------------
@@ -171,10 +170,16 @@ else
    exit
 fi
 
-
-### Load the data into the database
+### Send the data to the database on Lisa
 # -------------------------------------
-
+echo "$(date -Is) : Feeding data into the database..." >> $MASTER_LOG
+bash /home/data/apps/topfibers/repo/TopFIBers-data-loader/run_data_loader.sh
+if [ $? -eq 0 ]; then
+   echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
+else
+   echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
+   exit
+fi
 
 ### Update the post counts data frame
 # Log file saved here: ./logs/post_count.log
