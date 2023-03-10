@@ -19,16 +19,15 @@ from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
-config_file_path = 'conf/fibindex.config'
-
 def get_fib_index_conf():
     try:
+        config_file_path = 'conf/fibindex.config'
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_path)
         return config_parser
     except FileNotFoundError as fnf_error:
         traceback.print_tb(fnf_error.__traceback__)
-        raise Exception('Unable to find the fibIndex config file'):
+        raise Exception('Unable to find the fibIndex config file')
 
 def get_database_host():
     try:

@@ -35,7 +35,8 @@ LOG_FNAME = "database_server.log"
 # --- Specific months ---
 # MONTHS = ["2022_10", "2023_01", "2023_03"]
 # --- Current month (should be the default) ---
-MONTHS = [datetime.datetime.now().strftime("%Y_%m")]
+#MONTHS = [datetime.datetime.now().strftime("%Y_%m")]
+MONTHS = ["2022_01"]
 
 def update_database():
     """
