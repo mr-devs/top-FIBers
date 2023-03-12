@@ -37,6 +37,13 @@ create table reshares(
 	CONSTRAINT pk_reshares PRIMARY KEY(post_id,report_id,platform)
 );
 
+-- create table profile_links
+create table profile_links(
+	id SERIAL PRIMARY KEY,
+	user_id VARCHAR(100) NOT NULL,
+	platform VARCHAR(20),
+	profile_image_url VARCHAR(255)
+);
 
 CREATE INDEX idx_reshares_post_id ON reshares (post_id);
 CREATE INDEX idx_posts_user_id ON posts (user_id);

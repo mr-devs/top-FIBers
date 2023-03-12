@@ -19,7 +19,7 @@ import os
 import re
 import traceback
 import pandas as pd
-from database_functions import reports, fib_indices, posts, reshares
+from database_functions import reports, fib_indices, posts, reshares, profile_links
 from top_fibers_pkg.utils import get_logger
 
 FIB_INDICES = "fib_indices"
@@ -130,6 +130,39 @@ def add_data(read_dir, platform, selected_month):
     else:
         logger.error("There is no files related to that name!")
         raise Exception("There is no files related to the that name!")
+
+
+def add_profile_pic_links(read_file, platform):
+    """
+    Check the profile pictures existed, if no pass the data to profile_link table
+
+    Parameters
+    -----------
+    - read_file (str): data file path with file name
+    - platform (str): specifies the platform data we are working with
+        Options: ["facebook", "twitter"]
+
+    Returns
+    -----------
+    None
+    """
+    logger.info("Add profile picture links!")
+    df_profile_links = pd.read_parquet(read_file)
+    existing_links = profile_links.get_all_profile_links()
+    for index, row in df_profile_links.iterrows():
+        # check if the user_id already exists in the database
+        if existing_links is None or row.user_id not in existing_links:
+            try:
+                profile_links.add_profile_links(
+                    row.user_id,
+                    platform,
+                    row.profile_image_url
+                )
+            except Exception as err:
+                traceback.print_tb(err.__traceback__)
+                logger.error(
+                    "Error in adding data to profile link table!"
+                )
 
 
 def extract_date_convert_datetime(file_name):
