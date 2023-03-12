@@ -93,7 +93,7 @@ def add_data(read_dir, platform, selected_month):
                     # The file loaded is based on the provided `platform`
                     elif TOP_SPREADERS in file:
                         logger.info(
-                            "Loading top spreader file for the {}", selected_month
+                           f"Loading top spreader file for the month: {selected_month}"
                         )
                         df_top_spreaders = pd.read_parquet(path_to_data)
                         for index, row in df_top_spreaders.iterrows():
@@ -104,8 +104,7 @@ def add_data(read_dir, platform, selected_month):
                                     row.user_id,
                                     platform,
                                     row.timestamp,
-                                    row.post_url,
-                                )
+                                    row.post_url,)
                                 # Send data to reshares table
                                 reshares.add_reshares(
                                     row.post_id,
