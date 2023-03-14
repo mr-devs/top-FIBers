@@ -42,7 +42,7 @@ def update_database():
     """
     Update the Top FIBers database with the controller.add_data() function.
     """
-    #logger.info("Begin load past month data")
+    logger.info("Begin load past month data")
     for selected_month in MONTHS:
         for platform in PLATFORMS:
             read_dir = (
