@@ -10,3 +10,4 @@ of the database tables.
 - `posts.py`: contains functions to add the data to **posts** table
 - `reports.py`: contains functions to add the data to **reports** table
 - `reshares.py`: contains functions to add the data to **reshares** table
+- `profile_links.py` : contains functions to add and retrieve data from the **profile_links** table
