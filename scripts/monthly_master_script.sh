@@ -13,7 +13,7 @@
 # How to call:
 #   ```
 #   cd /home/data/apps/topfibers/repo 
-#   nohup python -u monthly.sh > logs/YYYY-MM-DD__month_master_script.out 2>&1 &
+#   nohup bash monthly_master_script.sh > logs/YYYY-MM-DD__month_master_script.out 2>&1 &
 #   ````
 #
 # Author: Matthew DeVerna
@@ -173,7 +173,7 @@ fi
 ### Send the data to the database on Lisa
 # -------------------------------------
 echo "$(date -Is) : Feeding data into the database..." >> $MASTER_LOG
-bash /home/data/apps/topfibers/repo/TopFIBers-data-loader/run_data_loader.sh
+bash data-loader/run_data_loader.sh
 if [ $? -eq 0 ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
