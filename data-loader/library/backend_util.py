@@ -26,7 +26,7 @@ logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name, also_print=True
 
 def get_fib_index_conf():
     try:
-        config_file_path = 'conf/fibindex.config'
+        config_file_path = '/home/data/apps/topfibers/repo/data-loader/conf/fibindex.config'
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_path)
         return config_parser
