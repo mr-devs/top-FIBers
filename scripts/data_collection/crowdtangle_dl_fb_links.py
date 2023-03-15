@@ -47,6 +47,8 @@ WAIT_BTWN_POSTS = 8
 # Base number of seconds to wait after encountering an error, raised to the number of try counts
 WAIT_BTWN_ERROR_BASE = 2
 
+# Maximum number of times to retry (*consecutive* failures) for a single domain
+MAX_ATTEMPTS = 5
 
 if __name__ == "__main__":
     script_name = os.path.basename(__file__)
@@ -114,7 +116,7 @@ if __name__ == "__main__":
             total_posts = 0
             try_count = 0
             query_count = 0
-            max_attempts = 3
+            max_attempts = MAX_ATTEMPTS
 
             start = start_date
             end = end_date
