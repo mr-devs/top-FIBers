@@ -24,6 +24,9 @@
 MAILTO=liu472@iu.edu
 SHELL=/bin/bash
 
+
 #####################################################################
 # Run the monthly master bash script on the first day of each month at 6:00 am
-0 6 1 * * bash /home/data/apps/topfibers/repo/scripts/monthly_master_script.sh
+# We run `source .top_fib_CT_setup` first to ensure that the monthly master
+# script has the CrowdTangle API key set as an environment variable
+0 6 1 * * source .top_fib_CT_setup ; bash /home/data/apps/topfibers/repo/scripts/monthly_master_script.sh
