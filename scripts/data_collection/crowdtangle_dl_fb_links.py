@@ -77,20 +77,24 @@ if __name__ == "__main__":
     # Load CrowdTangle token
     ct_token = os.environ.get("TOP_FIBERS_TOKEN")
     if ct_token is None:
-        raise ValueError(
+        msg = (
             "Crowdtangle API token not set as an environment variable. "
             "Run: <export TOP_FIBERS_TOKEN='INSERT_TOKEN_HERE'> and try again."
         )
+        logger.error(msg)
+        raise ValueError(msg)
 
     # Set start and end dates
     start_date, end_date = get_start_and_end_dates(num_months, last_month)
     current_time = datetime.datetime.now()
     if end_date > current_time:
-        raise ValueError(
+        msg = (
             "`end_date` cannot be after `current_time`!\n"
             f"\t end_date     : {end_date}\n"
             f"\t current_time : {current_time}\n"
         )
+        logger.error(msg)
+        raise ValueError(msg)
 
     logger.info(f"Start date  : {start_date}")
     logger.info(f"End date    : {end_date}")
