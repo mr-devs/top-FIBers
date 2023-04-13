@@ -36,8 +36,10 @@ from top_fibers_pkg.crowdtangle_helpers import ct_get_search_posts
 from top_fibers_pkg.utils import parse_cl_args_ct_dl, load_lines, get_logger
 
 SCRIPT_PURPOSE = "Download Facebook posts from CrowdTangle based on a list of links."
+REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "top_fibers_fb_link_dl.log"
+SUCCESS_FNAME = "success.log"
 
 NUMBER_OF_POSTS_PER_CALL = 10_000
 
@@ -270,4 +272,6 @@ if __name__ == "__main__":
                     end = oldest_date_dt.strftime("%Y-%m-%dT%H:%M:%S")
                     logger.info(f"\t|--> New end date: {end}")
                     logger.info(f"\t|--> {'-'*50}")
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
     logger.info("~~~ Script complete! ~~~")
