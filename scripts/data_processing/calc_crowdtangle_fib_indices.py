@@ -60,6 +60,7 @@ SCRIPT_PURPOSE = (
     "as well as the posts sent by the worst misinformation spreaders."
 )
 MATCHING_STR = "*.jsonl.gzip"
+SUCCESS_FNAME = "success.log"
 
 # NOTE: Set the number of top ranked spreaders to select and which type
 NUM_SPREADERS = 50
@@ -258,4 +259,6 @@ if __name__ == "__main__":
     fib_frame.to_parquet(output_fib_fname, index=False, engine="pyarrow")
     top_spreader_df.to_parquet(output_rt_fname, index=False, engine="pyarrow")
 
-    logger.info("Script Complete.")
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
+    logger.info("~~~ Script complete! ~~~")

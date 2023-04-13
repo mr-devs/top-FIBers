@@ -60,6 +60,7 @@ DATA_FILE_SUFFIX = "__tweets_w_links.jsonl.gzip"
 FIBER_DATA_DIR = "/home/data/apps/topfibers/repo/data/derived/fib_results/twitter/"
 FIBER_FILE_SUFFIX = "__fib_indices_twitter.parquet"
 OUTPUT_FILE = "/home/data/apps/topfibers/repo/data/derived/twitter_profile_links/top_fiber_profile_image_links.parquet"
+SUCCESS_FNAME = "success.log"
 NUM_FIBERS = 50
 
 
@@ -266,4 +267,6 @@ if __name__ == "__main__":
     logger.info(f"Saving profile image link file here:")
     logger.info(f"\t- {OUTPUT_FILE}")
     image_link_df.to_parquet(OUTPUT_FILE, engine="pyarrow")
-    logger.info("----- Script complete -----")
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
+    logger.info("~~~ Script complete! ~~~")

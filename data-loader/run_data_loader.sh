@@ -36,3 +36,5 @@ ${python} ${loader_home}/server.py
 
 # Kill SSH tunnel process
 kill $tunnel_pid
+
+touch /home/data/apps/topfibers/repo/success.log

@@ -26,6 +26,7 @@ SCRIPT_PURPOSE = "Create symbolic links for the period specified"
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "data_file_symlinks.log"
+SUCCESS_FNAME = "success.log"
 
 
 def get_symlink_tuples(files, start, end, output_dir):
@@ -137,3 +138,7 @@ if __name__ == "__main__":
     files = glob.glob(os.path.join(data_path, "*.gzip"))
     files_to_symlink = get_symlink_tuples(files, start, end, output_dir_w_month)
     create_sym_links(files_to_symlink)
+
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
+    logger.info("~~~ Script complete! ~~~")

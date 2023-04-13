@@ -34,6 +34,7 @@ OUTPUT_DIR = "/home/data/apps/topfibers/repo/data/raw/twitter"
 OUTPUT_SUFFIX = "__tweets_w_links.jsonl.gzip"
 RAW_DATA_DIR = "/home/data/apps/topfibers/moe_twitter_data"
 REPO_ROOT = "/home/data/apps/topfibers/repo"
+SUCCESS_FNAME = "success.log"
 
 
 if __name__ == "__main__":
@@ -89,3 +90,7 @@ if __name__ == "__main__":
 
         # Remove the directory now that we've gotten the file
         shutil.rmtree(raw_month_dir)
+
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
+    logger.info("~~~ Script complete! ~~~")

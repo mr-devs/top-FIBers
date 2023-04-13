@@ -87,3 +87,5 @@ else
    echo "$(date -Is) : FAILED. Will exit now"
    exit
 fi
+
+touch ${fiber_home}repo/success.log

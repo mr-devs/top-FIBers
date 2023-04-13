@@ -35,6 +35,7 @@ SCRIPT_PURPOSE = (
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "post_count.log"
+SUCCESS_FNAME = "success.log"
 
 
 def parse_cl_args(script_purpose="", logger=None):
@@ -149,4 +150,6 @@ if __name__ == "__main__":
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     counts_df.to_parquet(output_filepath, index=False, engine="pyarrow")
-    logger.info("Script complete.")
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
+    logger.info("~~~ Script complete! ~~~")
