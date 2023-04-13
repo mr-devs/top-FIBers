@@ -25,6 +25,7 @@ from top_fibers_pkg.utils import get_logger
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "iffy_update.log"
+SUCCESS_FNAME = "success.log"
 SCRIPT_PURPOSE = "Update the Iffy News list of low-credibility domains."
 
 
@@ -105,10 +106,9 @@ if __name__ == "__main__":
     new_iffy = get_iffy()
     logger.info("Writing new domains list to the disk...")
     today = datetime.datetime.now().strftime("%Y-%m-%d")
-    iffy_file = os.path.join(
-        iffy_dir, 
-        f"{today}__iffy_list.txt"
-    )
+    iffy_file = os.path.join(iffy_dir, f"{today}__iffy_list.txt")
     with open(iffy_file, "w+") as outfile:
         outfile.writelines(new_iffy)
+    with open(os.path.join(REPO_ROOT, SUCCESS_FNAME), "w+") as outfile:
+        pass
     logger.info("~~~ Script complete. ~~~")
