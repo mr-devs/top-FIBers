@@ -50,6 +50,9 @@ WAIT_BTWN_ERROR_BASE = 2
 # Maximum number of times to retry (*consecutive* failures) for a single domain
 MAX_ATTEMPTS = 5
 
+# Maximum number of times to retry (*consecutive* failures) for domains that return no posts
+MAX_EMPTY_ATTEMPTS = 2
+
 if __name__ == "__main__":
     script_name = os.path.basename(__file__)
     logger = get_logger(LOG_DIR, LOG_FNAME, script_name=script_name)
@@ -121,6 +124,8 @@ if __name__ == "__main__":
             try_count = 0
             query_count = 0
             max_attempts = MAX_ATTEMPTS
+            zero_post_count = 0
+            max_empty_attempts = MAX_EMPTY_ATTEMPTS
 
             start = start_date
             end = end_date
@@ -179,12 +184,25 @@ if __name__ == "__main__":
                         continue
 
                 else:
+                    # Returned CT results successfully, with zero posts
                     if num_posts == 0:
                         logger.info("Zero posts were returned.")
                         try_count += 1
-                        logger.info(f"There are {max_attempts-try_count} retries left.")
+                        zero_post_count += 1
+                        logger.info(
+                            f"Empty retries remaining: {max_empty_attempts-try_count}"
+                        )
+                        logger.info(
+                            f"Total retries remaining: {max_attempts-try_count}"
+                        )
+                        if zero_post_count >= MAX_EMPTY_ATTEMPTS:
+                            logger.info(
+                                "Two consecutive queries with no posts. "
+                                "Breaking out of loop!"
+                            )
+                            break
 
-                        if (max_attempts - try_count) <= 0:
+                        elif (max_attempts - try_count) <= 0:
                             logger.info("Breaking out of loop!")
                             break
                         else:
@@ -198,9 +216,11 @@ if __name__ == "__main__":
                             logger.info(f"Retrying...")
                             continue
 
+                    # Returned CT results successfully, with new posts
                     else:
                         # Reset the retry count to zero
                         try_count = 0
+                        zero_post_count = 0
 
                         most_recent_date_str = posts[0]["date"]
                         oldest_date_str = posts[-1]["date"]
