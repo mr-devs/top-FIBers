@@ -59,12 +59,15 @@ fi
 # -------------------------------------
 echo "$(date -Is) : Downloading a new iffy domains file." >> $MASTER_LOG
 $PYTHON_ENV scripts/data_collection/iffy_update.py -d $IFFY_FILES_DIR
-if [ $? -eq 0 ]; then
+if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
    exit
 fi
+
+echo "BALLS"
+exit
 
 ### Download the Facebook data
 # Log file saved here:
