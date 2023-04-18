@@ -31,6 +31,12 @@ year_month=$(date --date='last month' '+%Y-%m')
 end_of_last_month=$(date -d "$(date +%Y-%m-01) -1 day" +%Y-%m-%d)
 today="$(date +%Y-%m-%d)__"
 
+# check if year_month is empty
+if [[ -z "$year_month" ]]; then
+  echo "year_month variable is empty. Exiting script."
+  exit 1
+fi
+
 # Set paths and filenames
 fiber_home="/home/data/apps/topfibers/"
 tavern_job="osome_swap/moe/jobs/top_fibers_data/" # relative path for the shared disk bewteen Lisa and Moe; prefix "/mnt/" -> Moe, prefix "/home/data/" -> Lisa
