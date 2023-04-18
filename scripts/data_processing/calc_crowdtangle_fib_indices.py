@@ -40,6 +40,8 @@ import json
 import os
 import sys
 
+import pandas as pd
+
 from collections import defaultdict
 from top_fibers_pkg.data_model import FbIgPost
 from top_fibers_pkg.dates import get_earliest_date
@@ -55,6 +57,7 @@ from top_fibers_pkg.fib_helpers import (
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "calc_facebook_fib_indices.log"
+BLACK_LIST = "./data/raw/blacklist.csv"
 SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
     "as well as the posts sent by the worst misinformation spreaders."
@@ -68,6 +71,7 @@ SPREADER_TYPE = "fib_index"  # Options: ["total_reshares", "fib_index"]
 
 # Set the number of months to calculate the FIB index from
 NUM_MONTHS = 3
+
 
 ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Set Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def extract_data_from_files(data_files, earliest_date_tstamp):
@@ -218,6 +222,21 @@ if __name__ == "__main__":
         )
     except Exception as e:
         logger.exception(f"Problem creating FIB frame!")
+        raise Exception(e)
+
+    # Exclude media outlets using blacklist
+    try:
+        blacklist = pd.read_csv(
+            BLACK_LIST, dtype={"twitter_id": str, "facebook_id": str}
+        )
+        facebook_ids = set(blacklist.dropna(subset="facebook_id")["facebook_id"])
+        fib_frame = (
+            fib_frame[~fib_frame["user_id"].isin(facebook_ids).any(axis=1)]
+            .sort_values(by=SPREADER_TYPE, ascending=False)
+            .reset_index(drop=True)
+        )
+    except Exception as e:
+        logger.exception(f"Problem exlcluding blacklist users!")
         raise Exception(e)
 
     logger.info("Top spreader information:")
