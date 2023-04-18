@@ -39,6 +39,8 @@ import json
 import os
 import sys
 
+import pandas as pd
+
 from collections import defaultdict
 from top_fibers_pkg.data_model import Tweet_v1
 from top_fibers_pkg.dates import get_earliest_date
@@ -54,6 +56,7 @@ from top_fibers_pkg.fib_helpers import (
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "calc_twitter_fib_indices.log"
+BLACK_LIST = "./data/raw/blacklist.csv"
 SCRIPT_PURPOSE = (
     "Return the FIB indices for all users present in the provided data "
     "as well as the posts sent by the worst misinformation spreaders."
@@ -144,7 +147,6 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
                     # Handle retweets
                     if tweet.is_retweet:
-
                         # Only keep base retweet objs that occurred on or after the earliest date
                         timestamp_str = tweet.retweet_object.get_post_time(
                             timestamp=True
@@ -172,7 +174,6 @@ def extract_data_from_files(data_files, earliest_date_tstamp):
 
                     # Handle quotes
                     if tweet.is_quote:
-
                         # Only keep base quote objs that occurred on or after the earliest date
                         timestamp_str = tweet.quote_object.get_post_time(timestamp=True)
                         timestamp = datetime.datetime.fromtimestamp(
@@ -270,6 +271,21 @@ if __name__ == "__main__":
     fib_frame = create_fib_frame(
         userid_reshare_lists, userid_username, userid_total_reshares
     )
+
+    # Exclude media outlets using blacklist
+    try:
+        blacklist = pd.read_csv(
+            BLACK_LIST, dtype={"twitter_id": str, "facebook_id": str}
+        )
+        twitter_ids = set(blacklist.dropna(subset="twitter_id")["twitter_id"])
+        fib_frame = (
+            fib_frame[~fib_frame.isin(twitter_ids).any(axis=1)]
+            .sort_values(by=SPREADER_TYPE, ascending=False)
+            .reset_index(drop=True)
+        )
+    except Exception as e:
+        logger.exception(f"Problem exlcluding blacklist users!")
+        raise Exception(e)
 
     logger.info("Top spreader information:")
     logger.info(f"\t- Num. spreaders to select   : {NUM_SPREADERS}")

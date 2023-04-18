@@ -231,7 +231,7 @@ if __name__ == "__main__":
         )
         facebook_ids = set(blacklist.dropna(subset="facebook_id")["facebook_id"])
         fib_frame = (
-            fib_frame[~fib_frame["user_id"].isin(facebook_ids).any(axis=1)]
+            fib_frame[~fib_frame.isin(facebook_ids).any(axis=1)]
             .sort_values(by=SPREADER_TYPE, ascending=False)
             .reset_index(drop=True)
         )
