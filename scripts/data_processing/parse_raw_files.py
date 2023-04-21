@@ -122,9 +122,11 @@ def get_tweets(file_path, domains_set):
 if __name__ == "__main__":
     # Load domains list
     domains_set = set(load_domains(DOMAINS_DIR))
+    print(len(domains_set))
 
     # For each file, load tweet, collect those that contain any the domains we want
     files_to_clean = glob.glob(os.path.join(RAW_DIR_OLD, "*.gzip"))
+    print(len(files_to_clean))
 
     for file in files_to_clean:
         for tweet_obj in get_tweets(file, domains_set):
