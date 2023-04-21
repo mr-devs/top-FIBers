@@ -24,9 +24,9 @@ from top_fibers_pkg.utils import load_lines
 from top_fibers_pkg.data_model import Tweet_v1, FbIgPost
 
 
-DOMAINS_DIR = "/home/data/apps/topfibers/data/domains"
-RAW_DIR_OLD = "/home/data/apps/topfibers/data/raw_old"
-RAW_DIR_NEW = "/home/data/apps/topfibers/data/raw"
+DOMAINS_DIR = "/home/data/apps/topfibers/repo/data/iffy_files"
+RAW_DIR_OLD = "/home/data/apps/topfibers/repo/data/raw_old"
+RAW_DIR_NEW = "/home/data/apps/topfibers/repo/data/raw"
 
 PLATFORMS = ["facebook", "twitter"]
 
