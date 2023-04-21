@@ -29,6 +29,7 @@ RAW_DIR_OLD = "/home/data/apps/topfibers/repo/data/raw_old"
 RAW_DIR_NEW = "/home/data/apps/topfibers/repo/data/raw"
 
 PLATFORMS = ["facebook", "twitter"]
+PLATFORM = "twitter"
 
 
 def load_domains(domains_dir):
@@ -125,7 +126,10 @@ if __name__ == "__main__":
     print(len(domains_set))
 
     # For each file, load tweet, collect those that contain any the domains we want
-    files_to_clean = glob.glob(os.path.join(RAW_DIR_OLD, "*.gzip"))
+    if PLATFORM == "twitter":
+        files_to_clean = glob.glob(
+            os.path.join(os.path.join(RAW_DIR_OLD, PLATFORM), "*.gzip")
+        )
     print(len(files_to_clean))
 
     for file in files_to_clean:
