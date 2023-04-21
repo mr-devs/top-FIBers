@@ -115,7 +115,6 @@ if __name__ == "__main__":
 
     # Open file here so we don't have to hold data in memory
     with gzip.open(output_file_path, "wb") as f:
-
         # Iterate through each site
         for idx, domain in enumerate(domains, start=1):
             logger.info(
