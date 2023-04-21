@@ -10,7 +10,7 @@ Inputs:
 Outputs:
     New parsed files will be saved in the specified directory
 """
-import datetime
+import argparse
 import glob
 import gzip
 import json
@@ -28,8 +28,23 @@ DOMAINS_DIR = "/home/data/apps/topfibers/repo/data/iffy_files"
 RAW_DIR_OLD = "/home/data/apps/topfibers/repo/data/raw_old"
 RAW_DIR_NEW = "/home/data/apps/topfibers/repo/data/raw"
 
-PLATFORMS = ["facebook", "twitter"]
-PLATFORM = "twitter"
+
+def get_platform():
+    """
+    Load social media platform data to parse from command line argument.
+    """
+    parser = argparse.ArgumentParser(
+        description="Parse the tweets/FB posts to match less Iffy News domains."
+    )
+    parser.add_argument(
+        "-p",
+        "--platform",
+        choices=["twitter", "facebook"],
+        help="Which social media platform to load data from. Options: ['twitter', 'facebook']",
+    )
+
+    args = parser.parse_args()
+    return args.platform
 
 
 def load_domains(domains_dir):
@@ -121,17 +136,40 @@ def get_tweets(file_path, domains_set):
 
 
 if __name__ == "__main__":
+    # Get platform from command-line flag
+    platform = get_platform()
+
     # Load domains list
     domains_set = set(load_domains(DOMAINS_DIR))
-    print(len(domains_set))
 
-    # For each file, load tweet, collect those that contain any the domains we want
-    if PLATFORM == "twitter":
-        files_to_clean = glob.glob(
-            os.path.join(os.path.join(RAW_DIR_OLD, PLATFORM), "*.gzip")
-        )
-    print(len(files_to_clean))
+    # Get a list of the full paths to each file that we want to parse through
+    files_to_clean = glob.glob(
+        os.path.join(os.path.join(RAW_DIR_OLD, platform), "*.gzip")
+    )
 
-    for file in files_to_clean:
-        for tweet_obj in get_tweets(file, domains_set):
-            print(tweet_obj)
+    for file in sorted(files_to_clean):
+        # Create the new output file path
+        basename = os.path.basename(file)
+        output_path = os.path.join(RAW_DIR_NEW, platform, basename.replace("_OLD", ""))
+
+        with gzip.open(output_path, "wb") as f:
+            if platform == "twitter":
+                for tweet_dict in get_tweets(file, domains_set):
+                    json_str = json.dumps(tweet_dict)
+                    f.write(json_str.encode("utf-8"))
+                    f.write(b"\n")
+                print(f"\t- Completed: {basename}")
+
+            elif platform == "facebook":
+                if "fb_posts" not in file:
+                    raise TypeError("")
+                print("Facebook not developed yet. Passing and will do nothing.")
+                pass
+
+            # This shouldn't happen
+            else:
+                raise TypeError(
+                    f"Platform must be 'twitter' or 'facebook'. Currently: {platform}"
+                )
+
+    print("-- Script complete. ---")
