@@ -134,3 +134,4 @@ derived/
 raw/
 symbolic_links/
 env_code/
+.vscode/
