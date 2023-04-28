@@ -3,7 +3,7 @@
 # Purpose:
 #   This is a script that downloads the latest iffy list, then retrieve and save relevant raw twitter data from the past month.
 #   The process goes between different servers(Lenny, Lisa, Moe) for convinience and load balancing.
-#   
+#
 # Inputs:
 #   None
 #
@@ -26,6 +26,7 @@
 #
 # Author: Nick Liu & Matthew DeVerna
 
+
 # Set date-related variables
 year_month=$(date --date='last month' '+%Y-%m')
 end_of_last_month=$(date -d "$(date +%Y-%m-01) -1 day" +%Y-%m-%d)
@@ -39,7 +40,7 @@ fi
 
 # Set paths and filenames
 fiber_home="/home/data/apps/topfibers/"
-tavern_job="osome_swap/moe/jobs/top_fibers_data/" # relative path for the shared disk bewteen Lisa and Moe; prefix "/mnt/" -> Moe, prefix "/home/data/" -> Lisa
+tavern_job="osome_swap/moe/top_fibers_data/" # relative path for the shared disk bewteen Lisa and Moe; prefix "/mnt/" -> Moe, prefix "/home/data/" -> Lisa
 KEY=${HOME}/.ssh/id_rsa_moe
 iffy_filename="iffy_list.txt"
 
@@ -48,50 +49,48 @@ cd ${fiber_home}repo
 
 # Copy to Lisa-Moe shared drive
 echo "$(date -Is) : Copying the iffy list to the Lisa-Moe shared drive."
-rsync -at data/iffy_files/${today}${iffy_filename} truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${today}${iffy_filename}
-if [ $? -eq 0 ]; then
-   echo "$(date -Is) : SUCCESS."
+rsync -at data/iffy_files/2023-04-21__iffy_list.txt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${today}${iffy_filename} &> copy_iffy_log.txt
+if grep -q "failed" copy_iffy_log.txt; then
+  echo "$(date -Is) : Copy Faild, Will Exit Now"
+  exit
 else
-   echo "$(date -Is) : FAILED. Will exit now"
-   exit
+  echo "$(date -Is) : SUCCESS."
 fi
+rm copy_iffy_log.txt
 
 # Clean up tavern directory if exists
 echo "$(date -Is) : Cleaning up the tarvern directory if it exists."
 ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "if [ -d "/mnt/${tavern_job}${year_month}" ]; then rm -Rf /mnt/${tavern_job}${year_month}; fi"
-if [ $? -eq 0 ]; then
-   echo "$(date -Is) : SUCCESS."
-else
-   echo "$(date -Is) : FAILED. Will exit now"
-   exit
-fi
+
 
 # Create a tavern job
 echo "$(date -Is) : Running tavern query..."
-ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "/home/appuser/truthy-cmd.sh get-tweets-with-meme -memes "/mnt/${tavern_job}${today}${iffy_filename}" -tstart "${year_month}-01" -tend "${end_of_last_month}" -tid false -ntweets 1000000 -outdir /mnt/${tavern_job}${year_month}/ -torf false"
-if [ $? -eq 0 ]; then
-   echo "$(date -Is) : SUCCESS."
+ssh -i ${KEY} -o ServerAliveInterval=60 -o ServerAliveCountMax=10 appuser@moe-ln01.soic.indiana.edu "/home/appuser/truthy-cmd.sh get-tweets-with-meme -memes "/mnt/${tavern_job}${today}${iffy_filename}" -tstart "${year_month}-01" -tend "${end_of_last_month}" -tid false -ntweets 1000000 -outdir /mnt/${tavern_job}${year_month}/ -torf false > /dev/null 2>&1"
+
+# check if the directory is empty
+echo "$(date -Is) : Check if tavern query finished successfully..."
+ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "ls -A1 /mnt/'${tavern_job}${year_month}'/*" &> tavern_job_check.txt
+if grep -q "No such file or directory" tavern_job_check.txt; then
+  echo "$(date -Is) : Job folder empty. Will exit now"
+  exit
 else
-   echo "$(date -Is) : FAILED. Will exit now"
-   exit
+  echo "$(date -Is) : SUCCESS."
 fi
+rm tavern_job_check.txt
 
 # Clean up raw tweet directory if exists
+echo "$(date -Is) : Clean up raw tweet directory if exists..."
 if [ -d "${fiber_home}moe_twitter_data/${year_month}" ]; then rm -Rf ${fiber_home}moe_twitter_data/${year_month}; fi
-if [ $? -eq 0 ]; then
-   echo "$(date -Is) : SUCCESS."
-else
-   echo "$(date -Is) : FAILED. Will exit now"
-   exit
-fi
 
 # Copy results to Lenny:topfibers
-rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month} ${fiber_home}moe_twitter_data/
-if [ $? -eq 0 ]; then
-   echo "$(date -Is) : SUCCESS."
+echo "$(date -Is) : Copy results to Lenny:topfibers..."
+rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month} ${fiber_home}moe_twitter_data/ &> copy_twitter_raw_log.txt
+if grep -q "failed" copy_twitter_raw_log.txt; then
+  echo "$(date -Is) : Copy Faild, Will Exit Now"
+  exit
 else
-   echo "$(date -Is) : FAILED. Will exit now"
-   exit
+  echo "$(date -Is) : SUCCESS."
 fi
+rm copy_twitter_raw_log.txt
 
 touch ${fiber_home}repo/success.log
