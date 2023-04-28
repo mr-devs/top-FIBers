@@ -23,8 +23,9 @@ start_date=2022-01-01
 now=$(date "+%Y-%m-%d")
 
 # Set the end date to the beginning of the previous month
+# Note: The end date month is NOT reached in the loop below, so the last month for which
+#       data is collected will be the month prior to the current month.
 end_date=$(date -d "$now" +%Y-%m-01)
-end_date=$(date -d "$end_date -1 month" +%Y-%m-%d)
 
 # Set the directory to search for files
 directory="/home/data/apps/topfibers/repo/data/raw/facebook"
@@ -36,14 +37,16 @@ files=$(find "$directory" -name '*fb_posts_w_links.jsonl.gzip' -type f)
 while [ "$start_date" != "$end_date" ]; do
 
   # Extract the year and month from the start_date
-  year_month=$(date -d "$start_date" "+%Y-%m")
+  year_month=$(date -d "$start_date" "+%Y_%m")
+
 
   # Check if any files in the directory have the year_month in their filenames
-  if echo "$files" | grep -q "$year_month"; then
+  check_date=$(date -d "$start_date" "+%Y-%m") # Need this because date fmt in output fnames are different from input for script
+  if echo "$files" | grep -q "$check_date"; then
     echo "Skipping $year_month because files already exist in $directory"
   else
     echo "Processing $year_month"
-    #python -u scripts/data_collection/crowdtangle_dl_fb_links.py -d ./data/iffy_files/ -o /home/data/apps/topfibers/repo/data/raw/facebook -l $year_month -n 1
+    python -u scripts/data_collection/crowdtangle_dl_fb_links.py -d ./data/iffy_files/ -o /home/data/apps/topfibers/repo/data/raw/facebook -l $year_month -n 1
   fi
 
   # Move to the next month
