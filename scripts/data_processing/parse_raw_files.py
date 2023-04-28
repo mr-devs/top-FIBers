@@ -1,8 +1,16 @@
 """
-Purpose: 
+Purpose:
     On 2023-4-21 we decided to only use the Iffy News list of low-credibility domains
     that were marked as "low" or "very-low" in the MBFC "factual" category.
     This script is for parsing out tweets that had matched the "mixed" category domains.
+
+    IMPORTANT NOTE:
+    - THIS SCRIPT WAS NOT UTILIZED IN THE PIPELINE FOR THE PURPOSE DESCRIBED ABOVE.
+      WE KEEP IT HERE ONLY IN CASE IT MIGHT BE USEFUL IN THE FUTURE. INSTEAD OF USING
+      THE (potentially error prone) APPROACH OF PARSING THE POSTS, DATA WAS RE-DOWNLOADED
+      FOR CT AND REPULLED FOR TWITTER. AS A RESULT, THIS SCRIPTS IS **NOT COMPLETE** AND
+      STILL NEEDS TO BE UPDATED TO PARSE POSTS FOR CT. SHOULD YOU BE USING IT, PLEASE MAKE
+      SURE TO TEST IT PROPERLY BEFORE USE.
 
 Inputs:
     None. See below for hardcoded paths/files.
