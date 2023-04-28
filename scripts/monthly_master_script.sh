@@ -12,7 +12,7 @@
 #
 # How to call:
 #   ```
-#   cd /home/data/apps/topfibers/repo 
+#   cd /home/data/apps/topfibers/repo
 #   nohup bash monthly_master_script.sh > logs/YYYY-MM-DD__month_master_script.out 2>&1 &
 #   ````
 #
@@ -51,7 +51,7 @@ if [ $? -eq 0 ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 
 ### Download the latest Iffy news domains file
@@ -63,7 +63,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -77,7 +77,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -95,7 +95,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -109,7 +109,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -124,7 +124,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -137,7 +137,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -152,7 +152,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -165,7 +165,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -183,7 +183,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -196,7 +196,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -212,7 +212,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
@@ -224,7 +224,7 @@ if [ -e success.log ]; then
    echo "$(date -Is) : SUCCESS." >> $MASTER_LOG
 else
    echo "$(date -Is) : FAILED. Exiting <${SCRIPT_NAME}>." >> $MASTER_LOG
-   exit
+   exit 1
 fi
 # Remove after checking for successful completion
 rm success.log
