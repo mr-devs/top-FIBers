@@ -134,6 +134,7 @@ derived/
 raw/
 symbolic_links/
 env_code/
+.vscode/
 
 # old raw data
 data/raw_old/

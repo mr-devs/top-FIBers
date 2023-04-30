@@ -22,6 +22,7 @@ from urllib import request
 
 from top_fibers_pkg.utils import get_logger
 
+MBFC_FACTUAL_CATS = ["low", "very-low"]
 REPO_ROOT = "/home/data/apps/topfibers/repo"
 LOG_DIR = "./logs"
 LOG_FNAME = "iffy_update.log"
@@ -80,6 +81,8 @@ def get_iffy():
         sheet_id = new_url.split("/")[-2]
         google_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
         df = pd.read_csv(google_url)
+        # select only the domains that match our pre-defined MBFC factual categories
+        df = df[df["MBFC Fact"].isin(MBFC_FACTUAL_CATS)].reset_index(drop=True)
         list_of_url = [f"{url}*\n" for url in df.URL.tolist()]
     except Exception as e:
         logger.exception(f"Problem getting the new iffy list!\n\n{e}")
