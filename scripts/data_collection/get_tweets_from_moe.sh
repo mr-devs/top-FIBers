@@ -49,17 +49,17 @@ cd ${fiber_home}repo
 
 # Copy to Lisa-Moe shared drive
 echo "$(date -Is) : Copying the iffy list to the Lisa-Moe shared drive."
-rsync -at data/iffy_files/2023-04-21__iffy_list.txt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${today}${iffy_filename} &> copy_iffy_log.txt
-if grep -q "failed" copy_iffy_log.txt; then
+rsync -at data/iffy_files/${today}${iffy_filename} truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${today}${iffy_filename} &> logs/copy_iffy_log.txt
+if grep -q "failed" logs/copy_iffy_log.txt; then
   echo "$(date -Is) : Copy Faild, Will Exit Now"
-  exit
+  exit 1
 else
   echo "$(date -Is) : SUCCESS."
 fi
-rm copy_iffy_log.txt
+rm logs/copy_iffy_log.txt
 
 # Clean up tavern directory if exists
-echo "$(date -Is) : Cleaning up the tarvern directory if it exists."
+echo "$(date -Is) : Cleaning up the tarvern directory if it exists. '/mnt/${tavern_job}${year_month}'"
 ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "if [ -d "/mnt/${tavern_job}${year_month}" ]; then rm -Rf /mnt/${tavern_job}${year_month}; fi"
 
 
@@ -69,28 +69,28 @@ ssh -i ${KEY} -o ServerAliveInterval=60 -o ServerAliveCountMax=10 appuser@moe-ln
 
 # check if the directory is empty
 echo "$(date -Is) : Check if tavern query finished successfully..."
-ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "ls -A1 /mnt/'${tavern_job}${year_month}'/*" &> tavern_job_check.txt
-if grep -q "No such file or directory" tavern_job_check.txt; then
+ssh -i ${KEY} appuser@moe-ln01.soic.indiana.edu "ls -A1 /mnt/'${tavern_job}${year_month}'/*" &> logs/tavern_job_check.txt
+if grep -q "No such file or directory" logs/tavern_job_check.txt; then
   echo "$(date -Is) : Job folder empty. Will exit now"
-  exit
+  exit 1
 else
   echo "$(date -Is) : SUCCESS."
 fi
-rm tavern_job_check.txt
+rm logs/tavern_job_check.txt
 
 # Clean up raw tweet directory if exists
-echo "$(date -Is) : Clean up raw tweet directory if exists..."
+echo "$(date -Is) : Clean up raw tweet directory if exists...'${fiber_home}moe_twitter_data/${year_month}'"
 if [ -d "${fiber_home}moe_twitter_data/${year_month}" ]; then rm -Rf ${fiber_home}moe_twitter_data/${year_month}; fi
 
 # Copy results to Lenny:topfibers
-echo "$(date -Is) : Copy results to Lenny:topfibers..."
-rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month} ${fiber_home}moe_twitter_data/ &> copy_twitter_raw_log.txt
-if grep -q "failed" copy_twitter_raw_log.txt; then
+echo "$(date -Is) : Copy results to Lenny:topfibers...'${fiber_home}moe_twitter_data/'"
+rsync -rt truthy@lisa.luddy.indiana.edu:/home/data/${tavern_job}${year_month} ${fiber_home}moe_twitter_data/ &> logs/copy_twitter_raw_log.txt
+if grep -q "failed" logs/copy_twitter_raw_log.txt; then
   echo "$(date -Is) : Copy Faild, Will Exit Now"
-  exit
+  exit 1
 else
   echo "$(date -Is) : SUCCESS."
 fi
-rm copy_twitter_raw_log.txt
+rm logs/copy_twitter_raw_log.txt
 
 touch ${fiber_home}repo/success.log
