@@ -134,3 +134,6 @@ derived/
 raw/
 symbolic_links/
 env_code/
+
+# old raw data
+data/raw_old/
