@@ -25,28 +25,39 @@
 #
 # Author: Matthew DeVerna
 
-cd /home/data/apps/topfibers/repo/
+# Get the current year and month
+current_year=$(date +%Y)
+current_month=$(date +%m)
 
-env_python=/home/data/apps/topfibers/repo/environments/env_code/bin/python
+# Define the start year and month
+start_year=2022
+start_month=01
 
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_04 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_04 -n 3
+# Create an empty array to hold the months
+months=()
 
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_05 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_05 -n 3
+# Loop over the years and months and append to the array
+for year in $(seq $start_year $current_year); do
+    for month in $(seq -f "%02g" $start_month 12); do
+    echo "${year}_${month}"
+        # Append the year-month string to the array
+        months+=("${year}_${month}")
+        # If we've reached the current month, exit the loop
+        if [[ $year -eq $current_year && $month -eq $current_month ]]; then
+            break 2
+        fi
+    done
+    # Reset the start month to January after the first year
+    start_month=01
+done
 
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_06 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_06 -n 3
+env_python = '/home/data/apps/topfibers/repo/environments/env_code/bin/python'
+script_path = '/home/data/apps/topfibers/repo/scripts/data_processing/calc_twitter_fib_indices.py'
+data_path = '/home/data/apps/topfibers/repo/data/symbolic_links/twitter'
+out_path = '/home/data/apps/topfibers/repo/data/derived/fib_results/twitter'
+n_months = 3
 
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_07 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_07 -n 3
+for month in months:
+    $env_python $script_path -d $data_path/$month -o $out_path -m $month -n $n_months
 
-$env_python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_08 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_08 -n 3
-
-$env_python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_09 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_09 -n 3
-
-$env_python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_10 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_10 -n 3
-
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_11 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_11 -n 3
-
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2022_12 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2022_12 -n 3
-
-#python scripts/data_processing/calc_twitter_fib_indices.py -d /home/data/apps/topfibers/repo/data/symbolic_links/twitter/2023_01 -o /home/data/apps/topfibers/repo/data/derived/fib_results/twitter -m 2023_01 -n 3
-
-print("~~~~ Script complete ~~~~")
+echo ~~~ Script complete. ~~~
