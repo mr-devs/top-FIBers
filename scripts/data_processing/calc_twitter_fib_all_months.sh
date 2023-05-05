@@ -18,7 +18,7 @@
 # How to call:
 #   ```
 #   cd /home/data/apps/topfibers/repo 
-#   nohup python -u calc_twitter_fib_all_months.sh > logs/fib_tw_all.out 2>&1 &
+#   nohup bash calc_twitter_fib_all_months.sh > logs/fib_tw_all.out 2>&1 &
 #   ````
 #
 #   The above will write all output from all scripts to logs/fib_tw_all.out *as well as* the scripts own log file
