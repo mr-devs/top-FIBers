@@ -39,9 +39,10 @@ months=()
 # Loop over the years and months and append to the array
 for year in $(seq $start_year $current_year); do
     for month in $(seq -f "%02g" $start_month 12); do
-    echo "${year}_${month}"
+
         # Append the year-month string to the array
         months+=("${year}_${month}")
+
         # If we've reached the current month, exit the loop
         if [[ $year -eq $current_year && $month -eq $current_month ]]; then
             break 2
@@ -57,7 +58,8 @@ data_path=/home/data/apps/topfibers/repo/data/symbolic_links/twitter
 out_path=/home/data/apps/topfibers/repo/data/derived/fib_results/twitter
 n_months=3
 
-for month in months:
+for month in "${months[@]}"; do
     $env_python $script_path -d $data_path/$month -o $out_path -m $month -n $n_months
+done
 
 echo ~~~ Script complete. ~~~
