@@ -5,15 +5,15 @@
 #   It is not intended to be used in the regular pipeline, but could be useful in the future if all files need to be
 #   regenerated for some reason.
 #
-#   NOTE: The list of commands below will likely need to be updated for future calls and/or the script should be updated
-#   to iterate through a list of YYYY_MM dates updating the -d and -m flag inputs.
+#   IMPORTANT NOTE: This script will update ALL existing FIB output files. In theory, they should not change, however,
+#   make sure you know what you are doing.
 #
 # Inputs:
 #   None
 #
 # Output:
 #   All YYYY_MM_DD__fib_indices_<platform>.parquet and YYYY_MM_DD__top_spreader_posts_<platform>.parquet files
-#   for all months
+#   for all months from 2022_01 to current month when script is executed.
 #
 # How to call:
 #   ```
