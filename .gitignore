@@ -137,4 +137,4 @@ env_code/
 .vscode/
 
 # old raw data
-data/raw_old/
+data/raw_old_w_mixed_domains/
