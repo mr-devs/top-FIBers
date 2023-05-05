@@ -51,11 +51,11 @@ for year in $(seq $start_year $current_year); do
     start_month=01
 done
 
-env_python = '/home/data/apps/topfibers/repo/environments/env_code/bin/python'
-script_path = '/home/data/apps/topfibers/repo/scripts/data_processing/calc_twitter_fib_indices.py'
-data_path = '/home/data/apps/topfibers/repo/data/symbolic_links/twitter'
-out_path = '/home/data/apps/topfibers/repo/data/derived/fib_results/twitter'
-n_months = 3
+env_python=/home/data/apps/topfibers/repo/environments/env_code/bin/python
+script_path=/home/data/apps/topfibers/repo/scripts/data_processing/calc_twitter_fib_indices.py
+data_path=/home/data/apps/topfibers/repo/data/symbolic_links/twitter
+out_path=/home/data/apps/topfibers/repo/data/derived/fib_results/twitter
+n_months=3
 
 for month in months:
     $env_python $script_path -d $data_path/$month -o $out_path -m $month -n $n_months
