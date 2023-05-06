@@ -1,6 +1,6 @@
 ---
 title: "Updating this documentation"
-last_modified: "2022-11-13"
+last_modified: "2022-05-06"
 ---
 > Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
@@ -39,6 +39,8 @@ last_modified: "2022-11-13"
 > Last modified: {% raw  %}{{ page.last_modified | date: "%Y-%m-%d"}}{% endraw  %}
 ```
 What we are doing is setting a text string that can be accessed via `page.last_modified` and then it is converted into whatever format we dictate to the right of the pipe (`date: "%Y-%m-%d"`).
+
+5. **Do not create front matter for the landing documentation page -> `README.md`**
 
 
 ### Example markdown file
