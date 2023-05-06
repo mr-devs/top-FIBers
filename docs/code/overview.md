@@ -27,7 +27,7 @@ The structure of the `symbolic_links` directory is as follows:
     ├── 2022_02
     ...
 ```
-Inside of each `YYYY_MM` subdirectory are symbolic links to for the data used to calculate that month's report. For example, inside of `twitter/2022_01` we have:
+Inside of each `YYYY_MM` subdirectory are symbolic links to the data used to calculate that month's report. For example, inside of `twitter/2022_01` we have:
 ```
 2022_01
 ├── 2021-10-01__tweets_w_links.jsonl.gzip -> /home/data/apps/topfibers/repo/data/raw/twitter/2021-10-01__tweets_w_links.jsonl.gzip
