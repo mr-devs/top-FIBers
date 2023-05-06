@@ -136,5 +136,6 @@ symbolic_links/
 env_code/
 .vscode/
 
-# old raw data
+# old data
 data/raw_old_w_mixed_domains/
+data/derived_old_w_mixed_domains/
