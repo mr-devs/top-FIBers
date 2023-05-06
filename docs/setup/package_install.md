@@ -1,12 +1,19 @@
 ---
 title: "Local package install (required)"
-last_modified: "2022-11-13"
+last_modified: "2023-05-06"
 ---
 > Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
 
-The main script `scripts/calc_fib_indices.py` requires that you locally install the `top_fibers_pkg`.
-To do this, change your current working directory to the `package/` directory inside of this repository and then run:
+The entire pipeline makes use of the local `top_fibers_pkg` Python package.
+If you correctly initialize your environment (see [Setting up the conda environment](./environment.md)) then you should automatically have access to this package.
 
-```bash
-pip install -e .
-```
+If for some reason this does not work, you can install the package locally yourself in the following way.
+1. Change your current working directory to the `package` directory
+    ```
+    # Assumes you are on `Lenny`
+    cd /home/data/apps/topfibers/repo/package
+    ```
+2. Use the pip local install 
+    ```bash
+    pip install -e .
+    ```
