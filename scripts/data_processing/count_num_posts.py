@@ -63,8 +63,8 @@ def parse_cl_args(script_purpose="", logger=None):
     parser = argparse.ArgumentParser(description=script_purpose)
 
     help_msg = (
-        "Full path to the output directory where you'd like to save post counts. ",
-        "Ex: /home/data/apps/topfibers/repo/data/derived/post_counts/twitter",
+        "Full path to the output directory where you'd like to save post counts. "
+        "Ex: /home/data/apps/topfibers/repo/data/derived/post_counts/twitter"
     )
     parser.add_argument(
         "-o",
@@ -74,8 +74,8 @@ def parse_cl_args(script_purpose="", logger=None):
         required=True,
     )
     help_msg = (
-        "Full path to the raw posts directory (subdirs should be 'twitter' and 'facebook'). ",
-        "Ex: /home/data/apps/topfibers/repo/data/raw",
+        "Full path to the raw posts directory (subdirs should be 'twitter' and 'facebook'). "
+        "Ex: /home/data/apps/topfibers/repo/data/raw"
     )
     parser.add_argument(
         "-d",
