@@ -62,18 +62,26 @@ def parse_cl_args(script_purpose="", logger=None):
     # Initiate the parser
     parser = argparse.ArgumentParser(description=script_purpose)
 
+    help_msg = (
+        "Full path to the output directory where you'd like to save post counts. ",
+        "Ex: /home/data/apps/topfibers/repo/data/derived/post_counts/twitter",
+    )
     parser.add_argument(
         "-o",
         "--output-dir",
         metavar="Output directory",
-        help="Full path to the output directory where you'd like to save post counts",
+        help=help_msg,
         required=True,
+    )
+    help_msg = (
+        "Full path to the raw posts directory (subdirs should be 'twitter' and 'facebook'). ",
+        "Ex: /home/data/apps/topfibers/repo/data/raw",
     )
     parser.add_argument(
         "-d",
         "--data-dir",
         metavar="Data dir",
-        help="Full path to the raw posts directory (subdirs should be 'twitter' and 'facebook')",
+        help=help_msg,
         required=True,
     )
     parser.add_argument(
@@ -128,7 +136,6 @@ if __name__ == "__main__":
 
     data = []
     for fnum, file in enumerate(files, start=1):
-
         logger.info(f"Working on file ({fnum}/{num_files}): {file}")
         if previously_counted_files is not None and file in previously_counted_files:
             logger.info("Skipping file because it has already been counted.")
