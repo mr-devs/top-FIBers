@@ -64,7 +64,7 @@ def parse_cl_args(script_purpose="", logger=None):
 
     help_msg = (
         "Full path to the output directory where you'd like to save post counts. "
-        "Ex: /home/data/apps/topfibers/repo/data/derived/post_counts/twitter"
+        "Ex: /home/data/apps/topfibers/repo/data/derived/post_counts"
     )
     parser.add_argument(
         "-o",
