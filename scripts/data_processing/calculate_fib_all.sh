@@ -6,8 +6,10 @@
 #   It is not intended to be used in the regular pipeline, but could be useful in the future if all files need to be
 #   regenerated for some reason.
 #
-#   IMPORTANT NOTE: Output files are marked with the date that they are created. If FIB files already exist for that period
+#   NOTES:
+#   - Output files are marked with the date that they are created. If FIB files already exist for that period
 #   this means you will have two versions of the same file and you must manually remove the old files
+#   - If you would like to specify specific months, uncomment the line just before the loop
 #
 # Inputs:
 #   platform: either "twitter" or "facebook"
@@ -70,6 +72,9 @@ done
 # Ensures we run the script with the correct python environment for this project
 env_python=/home/data/apps/topfibers/repo/environments/env_code/bin/python
 n_months=3
+
+### UNCOMMENT THE BELOW IF YOU WOULD LIKE TO SPECIFY MONTHS  ###
+# months=("2022_01" "2022_05" "2023_01")
 
 for month in "${months[@]}"; do
     $env_python $script_path -d $data_path/$month -o $out_path -m $month -n $n_months
