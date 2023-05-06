@@ -37,8 +37,8 @@ if [ "$1" == "twitter" ]; then
 elif [ "$1" == "facebook" ]; then
   echo "#### Calculating Facebook FIB indices ####"
   script_path=/home/data/apps/topfibers/repo/scripts/data_processing/calc_crowdtangle_fib_indices.py
-  data_path=/path/to/facebook/data
-  out_path=/path/to/facebook/output
+  data_path=/home/data/apps/topfibers/repo/data/symbolic_links/facebook
+  out_path=/home/data/apps/topfibers/repo/data/derived/fib_results/facebook
 else
   echo "Invalid input. Please enter either 'twitter' or 'facebook'."
   exit 1
