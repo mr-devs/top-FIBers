@@ -14,6 +14,8 @@ Please see the [Data](../data.md) page for all details.
 ### 2. Preparing the data for processing
 After data has been retrieved and moved to the `/home/data/apps/topfibers/repo/data/raw` directory, the pipeline works by creating subdirectories full of symbolic links (kept here: `/home/data/apps/topfibers/repo/data/symbolic_links`) that point to the raw files for each platform.
 
+This is done with the [`scripts/data_prep/create_data_file_symlinks.py`](https://github.com/mr-devs/top-FIBers/blob/4a597ed2d38a597323b8e58857aa279f55b93144/scripts/data_prep/create_data_file_symlinks.py) script.
+
 The structure of the `symbolic_links` directory is as follows:
 ```
 ├── facebook
