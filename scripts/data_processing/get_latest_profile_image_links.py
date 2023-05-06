@@ -6,7 +6,7 @@ Purpose:
     NOTE: This script will update old links to profile images if we have a new one.
         It does this by iterating through files in reverse chronological order and then
         removing a user until links for all users have been found. By default, only 
-        FIBers that have been found in the latest month are update, however, to look for
+        FIBers that have been found in the latest month are updated, however, to look for
         and update ALL top FIBers, make sure to pass the --all-users flag to the script.
 
 Inputs:
