@@ -30,10 +30,12 @@
 
 # Get the user input and check if it's valid
 if [ "$1" == "twitter" ]; then
+  echo "#### Calculating Twitter FIB indices ####"
   script_path=/home/data/apps/topfibers/repo/scripts/data_processing/calc_twitter_fib_indices.py
   data_path=/home/data/apps/topfibers/repo/data/symbolic_links/twitter
   out_path=/home/data/apps/topfibers/repo/data/derived/fib_results/twitter
 elif [ "$1" == "facebook" ]; then
+  echo "#### Calculating Facebook FIB indices ####"
   script_path=/home/data/apps/topfibers/repo/scripts/data_processing/calc_crowdtangle_fib_indices.py
   data_path=/path/to/facebook/data
   out_path=/path/to/facebook/output
