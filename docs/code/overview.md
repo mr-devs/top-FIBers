@@ -11,7 +11,7 @@ The first step of the project is retrieving the data that is eventually processe
 
 Please see the [Data](../data.md) page for all details.
 
-### 2. Preparing the data for process
+### 2. Preparing the data for processing
 After data has been retrieved and moved to the `/home/data/apps/topfibers/repo/data/raw` directory, the pipeline works by creating subdirectories full of symbolic links (kept here: `/home/data/apps/topfibers/repo/data/symbolic_links`) that point to the raw files for each platform.
 
 The structure of the `symbolic_links` directory is as follows:
