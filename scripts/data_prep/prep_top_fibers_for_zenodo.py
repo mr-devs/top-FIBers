@@ -23,7 +23,7 @@ LOG_DIR = "./logs"
 LOG_FNAME = "prep_zenodo_files.log"
 
 # FIB DIR and GLOB_STRING are combined to find all FIB files under FIB_DIR via glob.glob()
-FIB_DIR = "./"
+FIB_DIR = "./data/derived/fib_results"
 GLOB_STRING = "*/*/*fib_indices*.parquet"
 OUTPUT_DIR = "./data/derived/zenodo_uploads"
 
@@ -67,7 +67,9 @@ if __name__ == "__main__":
     logger.info(f"Begin script: {__file__}")
 
     files = glob.glob(os.path.join(FIB_DIR, GLOB_STRING))
+    logger.info(f"Found {len(files)} files.")
 
+    logger.info(f"Saving files here: {OUTPUT_DIR}")
     for file in files:
         logger.info(f"Processing: {file}")
         df = pd.read_parquet(file)
@@ -75,6 +77,7 @@ if __name__ == "__main__":
         if os.path.exists(new_output_fname):
             logger.info("Skipping, file already exists:\n\t-", new_output_fname)
             continue
+        logger.info(f"Creating: {new_output_fname}")
         df.head(50).to_csv(new_output_fname, index=False)
 
     logger.info("Script complete.")
