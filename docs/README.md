@@ -21,6 +21,6 @@ This site makes up the official documentation of everything that is needed to kn
 ### Project leaders
 - Data analysis & Facebook data collection: Matt DeVerna (mdeverna@iu.edu)
 - Twitter Decahose data & Moe: Nick Liu (liu472@iu.edu)
-- Database & frontend: Pasan Kamburugamuwa (pkamburu@iu.edu)
+- Database & website: Pasan Kamburugamuwa (pkamburu@iu.edu)
 
 > This site is managed with [GitHub Pages](https://pages.github.com/). Configuration and design details are mostly specified with the [_config.yml](https://github.com/mr-devs/top-FIBers/blob/3cc7d9946abab4990c18ff66b425f874cbd11ce1/docs/_config.yml) file.
