@@ -9,12 +9,10 @@ This site makes up the official documentation of everything that is needed to kn
 💥‼️ **If you are new here, start with this page: [Updating this documentation](./documentation.md)** ‼️💥
 
 ### Contents
+- [Understanding the project workflow](./code/overview.md)
+- [Data](./data.md)
+- [FIB index](./fib_index.md)
 - [Setting up the project](./setup/setup.md)
     - [Setting up an environment](./setup/environment.md)
     - [Local package install (required)](./setup/package_install.md)
-- [Understanding the project workflow](./code/overview.md)
-    - [Understanding how `calc_fib_indices.py` works](./code/fib_script.md)
-    - [Understanding `top_fibers_pkg`](./code/top_fibers_pkg.md)
-- [Input data](./data.md)
-- [FIB-index](./fib_index.md)
 - [Updating this documentation](./documentation.md)
