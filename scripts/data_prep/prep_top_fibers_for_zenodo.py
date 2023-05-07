@@ -69,12 +69,12 @@ if __name__ == "__main__":
     files = glob.glob(os.path.join(FIB_DIR, GLOB_STRING))
 
     for file in files:
-        print(f"Processing: {file}")
+        logger.info(f"Processing: {file}")
         df = pd.read_parquet(file)
         new_output_fname = create_new_output_fname(file)
         if os.path.exists(new_output_fname):
-            print("Skipping, file already exists:\n\t-", new_output_fname)
+            logger.info("Skipping, file already exists:\n\t-", new_output_fname)
             continue
         df.head(50).to_csv(new_output_fname, index=False)
 
-    print("Script complete.")
+    logger.info("Script complete.")
