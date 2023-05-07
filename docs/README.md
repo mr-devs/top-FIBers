@@ -10,9 +10,12 @@ This site makes up the official documentation of everything that is needed to kn
 
 ### Contents
 - [Understanding the project workflow](./code/overview.md)
+- [System architecture](./code/architecture.md)
 - [Data](./data.md)
 - [FIB index](./fib_index.md)
 - [Setting up the project](./setup/setup.md)
     - [Setting up an environment](./setup/environment.md)
     - [Local package install (required)](./setup/package_install.md)
 - [Updating this documentation](./documentation.md)
+
+> This site is managed with [GitHub Pages](https://pages.github.com/). Configuration and design details are mostly specified with the [_config.yml](https://github.com/mr-devs/top-FIBers/blob/3cc7d9946abab4990c18ff66b425f874cbd11ce1/docs/_config.yml) file.
