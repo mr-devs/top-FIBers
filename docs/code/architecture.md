@@ -1,5 +1,5 @@
 ---
-title: "Understanding the project workflow"
+title: "System architecture"
 last_modified: "2023-05-07"
 ---
 > Last modified: {{ page.last_modified | date: "%Y-%m-%d"}}
