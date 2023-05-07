@@ -9,8 +9,10 @@ This site makes up the official documentation of everything that is needed to kn
 💥‼️ **If you are new here, start with this page: [Updating this documentation](./documentation.md)** ‼️💥
 
 ### Contents
-- [Understanding the project workflow](./code/overview.md)
-- [System architecture](./code/architecture.md)
+- [Code](./code/code.md)
+    - [Understanding the project workflow](./code/overview.md)
+    - [System architecture](./code/architecture.md)
+- [Code details](./code/details.md)
 - [Data](./data.md)
 - [FIB index](./fib_index.md)
 - [Setting up the project](./setup/setup.md)
