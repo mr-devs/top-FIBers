@@ -37,7 +37,7 @@ Inside of each `YYYY_MM` subdirectory are symbolic links to the data used to cal
 ├── 2021-11-01__tweets_w_links.jsonl.gzip -> /home/data/apps/topfibers/repo/data/raw/twitter/2021-11-01__tweets_w_links.jsonl.gzip
 └── 2021-12-01__tweets_w_links.jsonl.gzip -> /home/data/apps/topfibers/repo/data/raw/twitter/2021-12-01__tweets_w_links.jsonl.gzip
 ```
-This approach allows us to use the [`scripts/data_prep/create_data_file_symlinks.py`](https://github.com/mr-devs/top-FIBers/blob/4a597ed2d38a597323b8e58857aa279f55b93144/scripts/data_prep/create_data_file_symlinks.py) script to generate unique reports for different time periods (i.e., greater or less than the standard 3 months).
+This approach allows us to use the [`scripts/data_prep/create_data_file_symlinks.py`](https://github.com/mr-devs/top-FIBers/blob/4a597ed2d38a597323b8e58857aa279f55b93144/scripts/data_prep/create_data_file_symlinks.py) script to generate unique reports for different time periods (i.e., more or less months than the standard three).
 These directories of symbolic links are then provided as input to generate the FIB-index output files.
 
 ### 3. Generating FIB-index output file
