@@ -7,7 +7,6 @@ kramdown:
 
 header_pages:
   - README.md
-  - setup.md
   - documentation.md
 
 theme: minima
